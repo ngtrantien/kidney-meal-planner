@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from "react";
 import { generateMonthPlan, getRandomMeal } from "./data/meals";
 import "./App.css";
 
-// ── Icons (inline SVG để không cần thư viện) ──────────────
 const IconRefresh = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
     <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/>
@@ -44,7 +43,6 @@ const IconLeaf = () => (
   </svg>
 );
 
-// ── Meal Card ─────────────────────────────────────────────
 function MealCard({ meal, session, servings, onRandomize, dayNum }) {
   const [open, setOpen] = useState(false);
 
@@ -123,7 +121,6 @@ function MealCard({ meal, session, servings, onRandomize, dayNum }) {
   );
 }
 
-// ── Day Row ───────────────────────────────────────────────
 function DayRow({ entry, servings, onRandomize, isToday }) {
   const weekdays = ["CN", "T2", "T3", "T4", "T5", "T6", "T7"];
   const now = new Date();
@@ -144,7 +141,6 @@ function DayRow({ entry, servings, onRandomize, isToday }) {
   );
 }
 
-// ── Main App ──────────────────────────────────────────────
 export default function App() {
   const [plan, setPlan] = useState(() => generateMonthPlan());
   const [servings, setServings] = useState(2);
@@ -166,46 +162,41 @@ export default function App() {
     }
   };
 
-  const scrollToToday = () => {
-    const el = document.getElementById(`day-${today}`);
-    if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+  const scrollToDay = (day, block = "center") => {
+    const el = document.getElementById(`day-${day}`);
+    if (el) el.scrollIntoView({ behavior: "smooth", block });
   };
 
+  const scrollToToday = () => scrollToDay(today);
+
   useEffect(() => {
-    const timer = setTimeout(() => scrollToToday(), 300);
-    return () => clearTimeout(timer);
-  }, []);
+    setTimeout(() => scrollToDay(today, "start"), 300);
+  }, [today]);
 
   return (
     <div className="app">
       <header className="app-header">
         <div className="header-shell">
-          <div className="header-top">
-            <div className="brand">
-              <div className="logo-badge">
-                <span className="logo-icon">🫘</span>
-              </div>
-
-              <div className="brand-copy">
-                <span className="brand-eyebrow">Kidney Meal Planner</span>
-                <h1 className="app-title">Thực Đơn Thận Lành</h1>
-                <p className="app-sub">Kế hoạch bữa ăn 30 ngày dành cho người bệnh thận mạn tính</p>
-              </div>
+          <div className="header-brand-row">
+            <div className="logo-badge">
+              <span className="logo-icon">🫘</span>
             </div>
 
-            <div className="header-meta">
-              <span className="today-chip">
-                <IconCalendar />
-                Ngày {today}
-              </span>
+            <div className="brand-copy">
+              <span className="brand-kicker">Kidney Meal Planner</span>
+              <h1 className="app-title">Thực Đơn Thận Lành</h1>
+              <p className="app-sub">Kế hoạch bữa ăn 30 ngày dành cho người bệnh thận mạn tính</p>
             </div>
           </div>
 
-          <div className="header-toolbar">
-            <div className="control-card">
-              <label className="control-label">
-                <IconUsers /> Số người ăn
-              </label>
+          <div className="header-utility-grid">
+            <div className="compact-pill current-day-pill">
+              <IconCalendar />
+              <span>Ngày {today}</span>
+            </div>
+
+            <div className="compact-control servings-pill">
+              <span className="compact-label"><IconUsers /> Số người ăn</span>
               <div className="servings-control">
                 <button className="count-btn" onClick={() => setServings(s => Math.max(1, s - 1))}>−</button>
                 <span className="count-display">{servings}</span>
@@ -213,22 +204,21 @@ export default function App() {
               </div>
             </div>
 
-            <div className="header-actions">
-              <button className="btn-outline" onClick={scrollToToday}>
-                <IconCalendar /> Hôm nay
-              </button>
-              <button className="btn-primary" onClick={handleRegeneratePlan}>
-                <IconRefresh /> Thực đơn mới
-              </button>
-            </div>
+            <button className="compact-pill action-pill" onClick={scrollToToday}>
+              <IconCalendar />
+              <span>Hôm nay</span>
+            </button>
+
+            <button className="btn-primary action-pill" onClick={handleRegeneratePlan}>
+              <IconRefresh />
+              <span>Thực đơn mới</span>
+            </button>
           </div>
         </div>
 
         <div className="health-banner">
           <IconHeart />
-          <span>
-            Phù hợp cho người bệnh thận với tiêu chí <strong>ít kali · ít phốt-pho · ít natri · đạm vừa phải</strong>. Vẫn nên tham khảo bác sĩ hoặc chuyên gia dinh dưỡng.
-          </span>
+          <span>Phù hợp cho người bệnh thận với tiêu chí <strong>ít kali · ít phốt-pho · ít natri · đạm vừa phải</strong>. Vẫn nên tham khảo bác sĩ hoặc chuyên gia dinh dưỡng.</span>
         </div>
       </header>
 
@@ -238,10 +228,7 @@ export default function App() {
             <button
               key={d}
               className={`day-dot ${d === today ? "active" : ""}`}
-              onClick={() => {
-                const el = document.getElementById(`day-${d}`);
-                if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
-              }}
+              onClick={() => scrollToDay(d)}
             >
               {d}
             </button>
@@ -262,7 +249,7 @@ export default function App() {
       </main>
 
       <footer className="app-footer">
-        <p>Làm với <IconHeart /> để chăm sóc sức khỏe bố &nbsp;·&nbsp; Mỗi tháng bấm “Thực đơn mới” để xoay vòng</p>
+        <p>Làm với <IconHeart /> để chăm sóc sức khỏe bố &nbsp;·&nbsp; Mỗi tháng bấm "Thực đơn mới" để xoay vòng</p>
       </footer>
     </div>
   );
