@@ -1,405 +1,394 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useMemo, useState } from "react";
 import { generateMonthPlan, getRandomMeal } from "./data/meals";
 import { POSTS } from "./data/posts";
 import "./App.css";
-import "./content.css";
 
-const assetPath = (path) => `${process.env.PUBLIC_URL}${path}`;
-const placeholderMealImage = assetPath("/images/meals/placeholder.svg");
+const quickMenus = [
+  "Huong dan mon an than",
+  "Thong so dinh duong",
+  "Q&A voi bac si",
+  "Lich tai kham",
+  "Kho cong thuc",
+  "Thuc don theo tuan",
+  "Muc tieu uong nuoc",
+];
 
-// ─── Icons ─────────────────────────────────────────────
-const IconRefresh = () => (
-  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/>
-  </svg>
-);
-const IconSun = () => (
-  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
-  </svg>
-);
-const IconMoon = () => (
-  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
-  </svg>
-);
-const IconChevronDown = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <path d="m6 9 6 6 6-6"/>
-  </svg>
-);
-const IconHeart = () => (
-  <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-  </svg>
-);
-const IconUsers = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-  </svg>
-);
-const IconCalendar = () => (
-  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/>
-  </svg>
-);
-const IconLeaf = () => (
-  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
-  </svg>
-);
-const IconMenu = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
-  </svg>
-);
-const IconClose = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-  </svg>
-);
+const noticeTabs = ["Thong bao", "Loi nhac", "Kien thuc than"];
 
-// ─── Navbar ──────────────────────────────────────────────
-function Navbar({ servings, setServings, onRegeneratePlan, onScrollToToday }) {
-  const [drawerOpen, setDrawerOpen] = useState(false);
+const noticeByTab = {
+  "Thong bao": [
+    {
+      date: "08.15",
+      title: "Cap nhat thuc don than thang nay",
+      text: "Bo sung cac mon it natri va can doi dam cho benh than man.",
+    },
+    {
+      date: "08.10",
+      title: "Lich tu van dinh duong online",
+      text: "Mo khung 19:30 thu 3 va thu 6, dang ky ngay tren he thong.",
+    },
+    {
+      date: "08.08",
+      title: "Mau nhat ky an uong moi",
+      text: "Ban in 1 trang de theo doi muoi, kali, phospho moi ngay.",
+    },
+  ],
+  "Loi nhac": [
+    {
+      date: "Moi ngay",
+      title: "Uong nuoc theo huong dan ca nhan",
+      text: "Khong tang giam luong nuoc neu chua co tu van tu bac si dieu tri.",
+    },
+    {
+      date: "Moi bua",
+      title: "Niem nhat, uu tien luoc hap",
+      text: "Giam nuoc mam, hat nem, do dong hop va thuc pham che bien san.",
+    },
+    {
+      date: "Hang tuan",
+      title: "Theo doi can nang va huyet ap",
+      text: "Ghi lai thay doi bat thuong de trao doi trong lan tai kham.",
+    },
+  ],
+  "Kien thuc than": [
+    {
+      date: "Kien thuc",
+      title: "Vì sao can giam natri?",
+      text: "Giam muoi giup han che phu va giam ganh nang cho than va tim mach.",
+    },
+    {
+      date: "Kien thuc",
+      title: "Kiem soat kali nhu the nao?",
+      text: "Uu tien rau cu it kali, can doi khau phan theo ket qua xet nghiem.",
+    },
+    {
+      date: "Kien thuc",
+      title: "Dam vua phai trong CKD",
+      text: "Bo tri dam theo huong dan dieu tri de tranh tang ure mau.",
+    },
+  ],
+};
 
+function IconSearch() {
   return (
-    <nav className="navbar">
-      <div className="navbar-inner">
-        <a className="navbar-brand" href="#top">
-          <div className="navbar-logo-pill"><span>🫛</span></div>
-          <span className="navbar-name">Thực Đơn Thận</span>
-        </a>
-
-        <div className="navbar-links">
-          <a href="#plan" className="nav-link">Thực đơn</a>
-          <a href="#blog" className="nav-link">Kiến thức</a>
-        </div>
-
-        <div className="navbar-controls">
-          <div className="servings-row">
-            <IconUsers />
-            <span className="servings-row-label">Người ăn</span>
-            <div className="servings-counter">
-              <button onClick={() => setServings(s => Math.max(1, s - 1))}>−</button>
-              <span>{servings}</span>
-              <button onClick={() => setServings(s => Math.min(10, s + 1))}>+</button>
-            </div>
-          </div>
-
-          <button className="btn-ghost" onClick={onScrollToToday}>
-            <IconCalendar /><span>Hôm nay</span>
-          </button>
-
-          <button className="btn-primary" onClick={onRegeneratePlan}>
-            <IconRefresh /><span>Thực đơn mới</span>
-          </button>
-        </div>
-
-        <button className="navbar-hamburger" onClick={() => setDrawerOpen(v => !v)} aria-label="Menu">
-          {drawerOpen ? <IconClose /> : <IconMenu />}
-        </button>
-      </div>
-
-      {drawerOpen && (
-        <div className="navbar-drawer">
-          <a href="#plan" className="drawer-link" onClick={() => setDrawerOpen(false)}>📅 Thực đơn</a>
-          <a href="#blog" className="drawer-link" onClick={() => setDrawerOpen(false)}>📖 Kiến thức</a>
-          <div className="drawer-servings">
-            <IconUsers /><span>Người ăn</span>
-            <button onClick={() => setServings(s => Math.max(1, s - 1))}>−</button>
-            <strong>{servings}</strong>
-            <button onClick={() => setServings(s => Math.min(10, s + 1))}>+</button>
-          </div>
-          <button className="btn-ghost full-w" onClick={() => { onScrollToToday(); setDrawerOpen(false); }}>
-            <IconCalendar /><span>Hôm nay</span>
-          </button>
-          <button className="btn-primary full-w" onClick={() => { onRegeneratePlan(); setDrawerOpen(false); }}>
-            <IconRefresh /><span>Thực đơn mới</span>
-          </button>
-        </div>
-      )}
-    </nav>
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.8" />
+      <path d="M20 20L16.5 16.5" stroke="currentColor" strokeWidth="1.8" />
+    </svg>
   );
 }
 
-// ─── MealCard ─────────────────────────────────────────────
-function MealCard({ meal, session, servings, onRandomize, dayNum }) {
-  const [open, setOpen] = useState(false);
-  const [imageSrc, setImageSrc] = useState(meal.image || placeholderMealImage);
+function IconMenu() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M4 7H20M4 12H20M4 17H20" stroke="currentColor" strokeWidth="1.8" />
+    </svg>
+  );
+}
 
-  useEffect(() => {
-    setImageSrc(meal.image || placeholderMealImage);
-  }, [meal.image]);
+function IconRefresh() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M20 7V3M20 3H16M4 17V21M4 21H8" stroke="currentColor" strokeWidth="1.8" />
+      <path
+        d="M20 3C17.8 1.8 15.1 1.5 12.6 2.4C8.1 4 5.4 8.6 6 13.3M4 21C6.2 22.2 8.9 22.5 11.4 21.6C15.9 20 18.6 15.4 18 10.7"
+        stroke="currentColor"
+        strokeWidth="1.8"
+      />
+    </svg>
+  );
+}
 
-  const scale = (val) => {
-    const result = val * servings;
-    return result % 1 === 0 ? result : result.toFixed(1);
-  };
-
-  const sessionLabel = session === "lunch" ? "Bữa Trưa" : "Bữa Tối";
-  const SessionIcon = session === "lunch" ? IconSun : IconMoon;
+function MealCard({ label, meal, servings, onRandomize }) {
+  const scaledIngredients = meal.ingredients.slice(0, 4).map((item) => {
+    const amount = item.per1 * servings;
+    const display = Number.isInteger(amount) ? amount : amount.toFixed(1);
+    return `${item.name}: ${display}${item.unit}`;
+  });
+  const quickSteps = meal.steps.slice(0, 3);
 
   return (
-    <div className={`meal-card ${session} ${open ? "expanded" : ""}`}>
-      <div className="meal-image-wrap" onClick={() => setOpen(v => !v)}>
-        <img
-          className="meal-image"
-          src={imageSrc}
-          alt={meal.name}
-          loading="lazy"
-          onError={() => setImageSrc(placeholderMealImage)}
-        />
-        <div className="meal-img-overlay">
-          <span className={`session-chip ${session}`}>
-            <SessionIcon />{sessionLabel}
-          </span>
-          <span className={`expand-chevron ${open ? "open" : ""}`}>
-            <IconChevronDown />
-          </span>
-        </div>
+    <article className="meal-card">
+      <div className="meal-image-wrap">
+        <img src={meal.image} alt={meal.name} loading="lazy" />
+        <span className={`meal-badge ${label === "Lunch" ? "lunch" : "dinner"}`}>{label}</span>
       </div>
-
-      <div className="meal-info" onClick={() => setOpen(v => !v)}>
-        <h3 className="meal-name">{meal.name}</h3>
+      <div className="meal-body">
+        <h5>{meal.name}</h5>
         <div className="meal-tags">
-          {meal.tags.map(tag => (
-            <span key={tag} className="tag"><IconLeaf />{tag}</span>
+          {meal.tags.slice(0, 3).map((tag) => (
+            <span key={`${meal.id}-${tag}`}>{tag}</span>
           ))}
         </div>
-        <p className="meal-note">{meal.note}</p>
+        <p>{meal.note}</p>
+        <ul>
+          {scaledIngredients.map((line) => (
+            <li key={`${meal.id}-${line}`}>{line}</li>
+          ))}
+        </ul>
+        <h6>Cach che bien nhanh</h6>
+        <ol className="meal-steps">
+          {quickSteps.map((step, index) => (
+            <li key={`${meal.id}-step-${index + 1}`}>{step}</li>
+          ))}
+        </ol>
+        <button onClick={onRandomize}>
+          <IconRefresh />
+          Doi mon nay
+        </button>
       </div>
-
-      {open && (
-        <div className="meal-body">
-          <div className="section">
-            <h4 className="section-title">
-              <IconUsers />
-              Nguyên liệu <span className="serving-badge">{servings} người</span>
-            </h4>
-            <table className="ingredient-table">
-              <thead>
-                <tr><th>Nguyên liệu</th><th>Lượng</th></tr>
-              </thead>
-              <tbody>
-                {meal.ingredients.map((ing, i) => (
-                  <tr key={i}>
-                    <td>{ing.name}</td>
-                    <td className="amount">{scale(ing.per1)} {ing.unit}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          <div className="section">
-            <h4 className="section-title">Cách chế biến</h4>
-            <ol className="steps-list">
-              {meal.steps.map((step, i) => (
-                <li key={i}><span className="step-num">{i + 1}</span><span>{step}</span></li>
-              ))}
-            </ol>
-          </div>
-        </div>
-      )}
-
-      <button
-        className="randomize-btn"
-        onClick={(e) => { e.stopPropagation(); onRandomize(dayNum, session); }}
-        title="Đổi sang món khác"
-      >
-        <IconRefresh /><span>Đổi món khác</span>
-      </button>
-    </div>
+    </article>
   );
 }
 
-// ─── DayRow ───────────────────────────────────────────────
-function DayRow({ entry, servings, onRandomize, isToday }) {
-  const weekdays = ["CN", "T2", "T3", "T4", "T5", "T6", "T7"];
-  const now = new Date();
-  const dayOfWeek = weekdays[(now.getDay() + entry.day - 1) % 7];
-
+function DayPlan({ dayPlan, servings, onRandomize, isToday }) {
   return (
-    <div className={`day-row ${isToday ? "today" : ""}`} id={`day-${entry.day}`}>
-      <div className="day-strip">
-        <div className="day-label-group">
-          <span className="day-num">{entry.day}</span>
-          <span className="day-week">{dayOfWeek}</span>
-        </div>
-        {isToday && <span className="today-badge">✦ Hôm nay</span>}
-      </div>
-      <div className="day-meals">
-        <MealCard meal={entry.lunch} session="lunch" servings={servings} onRandomize={onRandomize} dayNum={entry.day} />
-        <MealCard meal={entry.dinner} session="dinner" servings={servings} onRandomize={onRandomize} dayNum={entry.day} />
-      </div>
-    </div>
-  );
-}
-
-// ─── BlogSection ─────────────────────────────────────────
-function BlogSection() {
-  return (
-    <section className="blog-section" id="blog">
-      <div className="section-heading">
-        <span className="section-eyebrow">Góc kiến thức</span>
-        <h2>Bài viết chăm sóc thận</h2>
-        <p>Các ghi chú ngắn để gia đình dễ theo dõi chế độ ăn ít muối, ít kali và phù hợp hơn mỗi ngày.</p>
-      </div>
-      <div className="blog-grid">
-        {POSTS.map((post) => (
-          <article className="blog-card" key={post.slug}>
-            <div className="blog-img-wrap">
-              <img src={post.image} alt={post.title} loading="lazy" />
-            </div>
-            <div className="blog-card-body">
-              <span className="blog-date">{post.date}</span>
-              <h3>{post.title}</h3>
-              <p>{post.excerpt}</p>
-              <details>
-                <summary>Đọc nhanh</summary>
-                <div className="blog-content" dangerouslySetInnerHTML={{ __html: post.content }} />
-              </details>
-            </div>
-          </article>
-        ))}
+    <section className={`day-plan ${isToday ? "is-today" : ""}`} id={`day-${dayPlan.day}`}>
+      <header>
+        <h4>Ngay {dayPlan.day}</h4>
+        {isToday && <span>Hom nay</span>}
+      </header>
+      <div className="day-plan-grid">
+        <MealCard
+          label="Lunch"
+          meal={dayPlan.lunch}
+          servings={servings}
+          onRandomize={() => onRandomize(dayPlan.day, "lunch")}
+        />
+        <MealCard
+          label="Dinner"
+          meal={dayPlan.dinner}
+          servings={servings}
+          onRandomize={() => onRandomize(dayPlan.day, "dinner")}
+        />
       </div>
     </section>
   );
 }
 
-// ─── App ─────────────────────────────────────────────────
 export default function App() {
   const [plan, setPlan] = useState(() => generateMonthPlan());
   const [servings, setServings] = useState(2);
-  const today = new Date().getDate();
+  const [activeTab, setActiveTab] = useState(noticeTabs[0]);
+  const today = Math.min(new Date().getDate(), 30);
 
-  const handleRandomize = useCallback((dayNum, session) => {
-    setPlan(prev => prev.map(entry => {
-      if (entry.day !== dayNum) return entry;
-      const currentMealId = entry[session].id;
-      const newMeal = getRandomMeal(session, currentMealId);
-      return { ...entry, [session]: newMeal };
-    }));
-  }, []);
+  const featuredMeals = useMemo(() => {
+    return plan.slice(0, 4).map((entry, idx) => {
+      const meal = idx % 2 === 0 ? entry.lunch : entry.dinner;
+      return { id: meal.id, name: meal.name, image: meal.image };
+    });
+  }, [plan]);
 
-  const handleRegeneratePlan = () => {
-    if (window.confirm("Tạo lại toàn bộ thực đơn tháng mới?")) {
-      setPlan(generateMonthPlan());
+  const scrollToDay = (day) => {
+    const el = document.getElementById(`day-${day}`);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   };
 
-  const scrollToDay = (day, block = "center") => {
-    const el = document.getElementById(`day-${day}`);
-    if (el) el.scrollIntoView({ behavior: "smooth", block });
+  const randomizeOne = (day, session) => {
+    setPlan((prev) =>
+      prev.map((entry) => {
+        if (entry.day !== day) return entry;
+        return {
+          ...entry,
+          [session]: getRandomMeal(session, entry[session].id),
+        };
+      })
+    );
   };
 
-  const scrollToToday = () => scrollToDay(today);
-
-  useEffect(() => {
-    setTimeout(() => scrollToDay(today, "start"), 300);
-  }, [today]);
+  const regeneratePlan = () => {
+    setPlan(generateMonthPlan());
+  };
 
   return (
-    <>
-      <Navbar
-        servings={servings}
-        setServings={setServings}
-        onRegeneratePlan={handleRegeneratePlan}
-        onScrollToToday={scrollToToday}
-      />
+    <div className="site-shell">
+      <header className="top-header">
+        <div className="topline">
+          <span>Kidney Care</span>
+          <span>Nutrition Hub</span>
+          <span>Meal Planner</span>
+        </div>
+        <div className="head-main">
+          <div className="brand">
+            <p>ThanKhoe</p>
+            <strong>Kidney Meal Planner Center</strong>
+          </div>
+          <nav>
+            <a href="#hero">Tong quan</a>
+            <a href="#notice">Thong tin</a>
+            <a href="#featured">Mon goi y</a>
+            <a href="#planner">Thuc don 30 ngay</a>
+          </nav>
+          <div className="head-actions">
+            <button aria-label="Search">
+              <IconSearch />
+            </button>
+            <button aria-label="Menu">
+              <IconMenu />
+            </button>
+          </div>
+        </div>
+      </header>
 
-      <div className="app" id="top">
-        {/* ── Hero ── */}
-        <header className="app-hero">
-          <div className="hero-body">
-            <div className="hero-text">
-              <span className="hero-eyebrow">Kidney Meal Planner</span>
-              <h1 className="hero-title">Thực Đơn<br />Thận Lành</h1>
-              <p className="hero-sub">
-                Kế hoạch bữa ăn 30 ngày dành cho người bệnh thận mạn tính —
-                ngon miệng, an toàn và dễ theo dõi mỗi ngày.
-              </p>
-              <div className="hero-chips">
-                <span className="hero-chip">🧂 Ít natri</span>
-                <span className="hero-chip">⚡ Ít kali</span>
-                <span className="hero-chip">🦴 Ít phốt-pho</span>
-                <span className="hero-chip">🥩 Đạm hợp lý</span>
-              </div>
+      <main className="content-wrap">
+        <section className="hero" id="hero">
+          <div className="hero-copy">
+            <p className="hero-eyebrow">Thuc don cho nguoi benh than</p>
+            <h1>
+              Layout moi giong mau
+              <br />
+              <span>nhung van dung cho thuc don than</span>
+            </h1>
+            <p>
+              Ke hoach 30 ngay gom bua trua va bua toi. Moi mon duoc uu tien it natri, kiem soat
+              kali va phospho, dam o muc vua phai.
+            </p>
+            <div className="quick-grid">
+              {quickMenus.map((item) => (
+                <button key={item}>{item}</button>
+              ))}
             </div>
+          </div>
+          <div className="hero-visual" aria-hidden="true">
+            <img
+              src="https://images.unsplash.com/photo-1471943311424-646960669fbc?auto=format&fit=crop&w=1400&q=80"
+              alt=""
+            />
+          </div>
+        </section>
 
-            <div className="hero-stats-card">
-              <div className="hero-stat">
-                <span className="hstat-num">30</span>
-                <span className="hstat-label">ngày</span>
+        <section className="notice" id="notice">
+          <div className="section-title-row">
+            <h2>Ban tin dinh duong than</h2>
+            <div className="tabs">
+              {noticeTabs.map((tab) => (
+                <button
+                  key={tab}
+                  className={tab === activeTab ? "active" : ""}
+                  onClick={() => setActiveTab(tab)}
+                >
+                  {tab}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="notice-grid">
+            <div className="notice-cards">
+              {noticeByTab[activeTab].map((item) => (
+                <article key={`${activeTab}-${item.title}`} className="notice-card">
+                  <time>{item.date}</time>
+                  <h3>{item.title}</h3>
+                  <p>{item.text}</p>
+                </article>
+              ))}
+            </div>
+            <aside className="focus-card">
+              <p>Chu de trong tam</p>
+              <h3>Giam muoi thong minh trong bua an hang ngay</h3>
+              <button>Doc huong dan</button>
+            </aside>
+          </div>
+        </section>
+
+        <section className="featured" id="featured">
+          <div className="section-title-row">
+            <h2>Mon goi y trong thang</h2>
+            <p>Lua chon tu chinh thuc don than dang duoc tao.</p>
+          </div>
+          <div className="featured-track">
+            {featuredMeals.map((item) => (
+              <article key={item.id}>
+                <img src={item.image} alt={item.name} loading="lazy" />
+                <strong>{item.name}</strong>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="education">
+          <h2>Thong tin giao duc benh than</h2>
+          <div className="education-grid">
+            <article className="education-card">
+              <h3>Lich theo doi suc khoe</h3>
+              <ul>
+                <li>Can nang: ghi vao buoi sang sau khi di tieu</li>
+                <li>Huyet ap: do 2 lan/ngay, ghi theo gio co dinh</li>
+                <li>Nuoc tieu: theo doi mau sac va luong</li>
+                <li>Tu van: mang nhat ky an uong khi tai kham</li>
+              </ul>
+            </article>
+            <article className="education-card">
+              <h3>Bai viet huu ich</h3>
+              <ul>
+                {POSTS.map((post) => (
+                  <li key={post.slug}>
+                    <strong>{post.title}</strong>
+                    <span>{post.date}</span>
+                  </li>
+                ))}
+              </ul>
+            </article>
+          </div>
+        </section>
+
+        <section className="planner" id="planner">
+          <div className="planner-head">
+            <div>
+              <h2>Thuc don than 30 ngay</h2>
+              <p>Chon ngay de nhay nhanh, doi mon theo bua va dieu chinh so khau phan.</p>
+            </div>
+            <div className="planner-controls">
+              <div className="servings">
+                <span>Khau phan</span>
+                <button onClick={() => setServings((v) => Math.max(1, v - 1))}>-</button>
+                <strong>{servings}</strong>
+                <button onClick={() => setServings((v) => Math.min(8, v + 1))}>+</button>
               </div>
-              <div className="hstat-divider" />
-              <div className="hero-stat">
-                <span className="hstat-num">60</span>
-                <span className="hstat-label">bữa ăn</span>
-              </div>
-              <div className="hstat-divider" />
-              <div className="hero-stat">
-                <span className="hstat-num">{servings}</span>
-                <span className="hstat-label">người</span>
-              </div>
+              <button className="regen-btn" onClick={regeneratePlan}>
+                <IconRefresh />
+                Tao lai thuc don
+              </button>
             </div>
           </div>
 
-          <div className="health-notice">
-            <IconHeart />
-            <span>
-              Thực đơn thiết kế cho chế độ ăn thận —
-              vẫn nên tham khảo <strong>bác sĩ hoặc chuyên gia dinh dưỡng</strong>.
-            </span>
-          </div>
-        </header>
-
-        {/* ── Month Nav ── */}
-        <div className="month-nav" id="plan">
-          <div className="month-nav-header">
-            <IconCalendar />
-            <span>Chọn ngày trong tháng</span>
-          </div>
-          <div className="week-strips">
-            {Array.from({ length: 30 }, (_, i) => i + 1).map(d => (
+          <div className="day-jump">
+            {Array.from({ length: 30 }, (_, i) => i + 1).map((day) => (
               <button
-                key={d}
-                className={`day-dot ${d === today ? "active" : ""}`}
-                onClick={() => scrollToDay(d)}
+                key={day}
+                className={day === today ? "today" : ""}
+                onClick={() => scrollToDay(day)}
               >
-                {d}
+                {day}
               </button>
             ))}
           </div>
-        </div>
 
-        {/* ── Meal Plan ── */}
-        <main className="plan-container">
-          {plan.map(entry => (
-            <DayRow
-              key={entry.day}
-              entry={entry}
-              servings={servings}
-              onRandomize={handleRandomize}
-              isToday={entry.day === today}
-            />
-          ))}
-        </main>
-
-        <BlogSection />
-
-        <footer className="app-footer">
-          <div className="footer-inner">
-            <span className="footer-logo">🫛</span>
-            <span className="footer-name">Thực Đơn Thận Lành</span>
-            <span className="footer-dot">·</span>
-            <span className="footer-note">
-              Làm với <IconHeart /> để chăm sóc sức khỏe
-            </span>
+          <div className="planner-list">
+            {plan.map((entry) => (
+              <DayPlan
+                key={entry.day}
+                dayPlan={entry}
+                servings={servings}
+                onRandomize={randomizeOne}
+                isToday={entry.day === today}
+              />
+            ))}
           </div>
-        </footer>
-      </div>
-    </>
+        </section>
+      </main>
+
+      <footer className="footer">
+        <div>
+          <strong>Kidney Meal Planner Center</strong>
+          <p>Ho tro xay dung bua an phu hop cho benh than man tinh.</p>
+        </div>
+        <div className="footer-actions">
+          <button onClick={() => scrollToDay(today)}>Den ngay hom nay</button>
+          <button onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>Len dau trang</button>
+        </div>
+      </footer>
+    </div>
   );
 }
