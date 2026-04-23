@@ -12,6 +12,14 @@ const quickMenus = [
   { label: "Món gợi ý", href: "#featured" },
 ];
 
+const navLinks = [
+  { label: "Tổng quan", href: "#hero" },
+  { label: "Nguyên tắc", href: "#notice" },
+  { label: "Cách dùng", href: "#guide" },
+  { label: "Blog", href: "#blog" },
+  { label: "Thực đơn", href: "#planner" },
+];
+
 const noticeTabs = ["Nguyên tắc", "Lời nhắc", "Cần hỏi bác sĩ"];
 
 const noticeByTab = {
@@ -270,6 +278,7 @@ export default function App() {
   const [servings, setServings] = useState(2);
   const [activeTab, setActiveTab] = useState(noticeTabs[0]);
   const [selectedDay, setSelectedDay] = useState(today);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const nextSelectedDay = selectedDay === 30 ? 1 : selectedDay + 1;
 
   const featuredMeals = useMemo(() => {
@@ -316,6 +325,10 @@ export default function App() {
     setPlan(generateMonthPlan());
   };
 
+  const closeMobileMenu = () => {
+    setMobileMenuOpen(false);
+  };
+
   const displayedPlans = [getDayPlan(selectedDay), getDayPlan(nextSelectedDay)].filter(Boolean);
 
   return (
@@ -331,12 +344,24 @@ export default function App() {
             <p>Thận Khỏe</p>
             <strong>Kidney Meal Planner Center</strong>
           </div>
-          <nav>
-            <a href="#hero">Tổng quan</a>
-            <a href="#notice">Nguyên tắc</a>
-            <a href="#guide">Cách dùng</a>
-            <a href="#blog">Blog</a>
-            <a href="#planner">Thực đơn</a>
+          <button
+            className={`menu-toggle ${mobileMenuOpen ? "is-open" : ""}`}
+            type="button"
+            aria-label={mobileMenuOpen ? "Đóng menu" : "Mở menu"}
+            aria-expanded={mobileMenuOpen}
+            aria-controls="main-navigation"
+            onClick={() => setMobileMenuOpen((open) => !open)}
+          >
+            <span />
+            <span />
+            <span />
+          </button>
+          <nav id="main-navigation" className={`main-nav ${mobileMenuOpen ? "is-open" : ""}`}>
+            {navLinks.map((link) => (
+              <a key={link.href} href={link.href} onClick={closeMobileMenu}>
+                {link.label}
+              </a>
+            ))}
           </nav>
         </div>
       </header>

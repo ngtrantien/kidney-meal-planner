@@ -19,28 +19,15 @@ if errorlevel 1 (
 git add -A
 
 git diff --cached --quiet
-if not errorlevel 1 goto has_changes
-
-echo [INFO] Khong co thay doi nao de commit.
-echo [INFO] Dang thu push nhanh branch hien tai...
-for /f "delims=" %%b in ('git branch --show-current') do set BRANCH=%%b
-if "%BRANCH%"=="" set BRANCH=main
-git push origin %BRANCH%
-if errorlevel 1 (
-  echo [ERROR] Push that bai.
-  pause
-  exit /b 1
-)
-echo [OK] Push thanh cong.
-pause
-exit /b 0
+if errorlevel 1 goto has_changes
+goto no_changes
 
 :has_changes
 set "MSG="
 set /p MSG=Nhap commit message (de trong de dung mac dinh): 
 
 if "%MSG%"=="" (
-  for /f %%t in ('powershell -NoProfile -Command "Get-Date -Format \"yyyy-MM-dd HH:mm:ss\""') do set NOW=%%t
+  for /f "delims=" %%t in ('powershell -NoProfile -Command "Get-Date -Format \"yyyy-MM-dd HH:mm:ss\""') do set NOW=%%t
   set "MSG=Update project !NOW!"
 )
 
@@ -62,5 +49,22 @@ if errorlevel 1 (
 )
 
 echo [OK] Commit + push thanh cong len origin/%BRANCH%.
+git status --short
+pause
+exit /b 0
+
+:no_changes
+echo [INFO] Khong co thay doi nao de commit.
+echo [INFO] Dang thu push nhanh branch hien tai...
+for /f "delims=" %%b in ('git branch --show-current') do set BRANCH=%%b
+if "%BRANCH%"=="" set BRANCH=main
+git push origin %BRANCH%
+if errorlevel 1 (
+  echo [ERROR] Push that bai.
+  pause
+  exit /b 1
+)
+echo [OK] Push thanh cong. Khong co commit moi.
+git status --short
 pause
 exit /b 0
