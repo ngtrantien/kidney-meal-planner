@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 750" role="img" aria-labelledby="title desc">
+  <title id="title">Ảnh bài viết</title>
+  <desc id="desc">Placeholder cho bài viết chăm sóc sức khỏe thận</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#eef7f0"/>
+      <stop offset="100%" stop-color="#fff3dc"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="750" fill="url(#bg)"/>
+  <rect x="190" y="150" width="820" height="450" rx="44" fill="#ffffff" stroke="#dfe7dd" stroke-width="8"/>
+  <path d="M300 275h420M300 355h600M300 435h510" stroke="#3b8252" stroke-width="30" stroke-linecap="round" opacity=".72"/>
+  <circle cx="875" cy="275" r="55" fill="#dff0e3" stroke="#3b8252" stroke-width="8"/>
+  <path d="M848 277c22-38 57-47 96-40-13 38-42 61-82 62 18-13 34-29 45-48-25 6-45 18-59 26Z" fill="#3b8252"/>
+  <text x="600" y="675" text-anchor="middle" font-family="Arial, sans-serif" font-size="40" font-weight="700" fill="#2e6d43">Góc kiến thức chăm sóc thận</text>
+</svg>
