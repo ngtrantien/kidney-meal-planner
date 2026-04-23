@@ -1,23 +1,23 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { generateMonthPlan, getRandomMeal } from "./data/meals";
 import { POSTS } from "./data/posts";
 import "./App.css";
 
 const quickMenus = [
-  { label: "Xem thực đơn", href: "#planner" },
-  { label: "Nguyên tắc ăn thận", href: "#notice" },
-  { label: "Hướng dẫn sử dụng", href: "#guide" },
-  { label: "Blog dinh dưỡng", href: "#blog" },
-  { label: "Theo dõi tại nhà", href: "#tracking" },
-  { label: "Món gợi ý", href: "#featured" },
+  { label: "Xem thực đơn", href: "#planner", page: "home" },
+  { label: "Nguyên tắc ăn thận", href: "#notice", page: "home" },
+  { label: "Hướng dẫn sử dụng", href: "#guide", page: "home" },
+  { label: "Blog dinh dưỡng", page: "blog" },
+  { label: "Theo dõi tại nhà", href: "#tracking", page: "home" },
+  { label: "Món gợi ý", href: "#featured", page: "home" },
 ];
 
 const navLinks = [
-  { label: "Tổng quan", href: "#hero" },
-  { label: "Nguyên tắc", href: "#notice" },
-  { label: "Cách dùng", href: "#guide" },
-  { label: "Blog", href: "#blog" },
-  { label: "Thực đơn", href: "#planner" },
+  { label: "Tổng quan", href: "#hero", page: "home" },
+  { label: "Thực đơn", href: "#planner", page: "home" },
+  { label: "Nguyên tắc", href: "#notice", page: "home" },
+  { label: "Cách dùng", href: "#guide", page: "home" },
+  { label: "Blog", page: "blog" },
 ];
 
 const noticeTabs = ["Nguyên tắc", "Lời nhắc", "Cần hỏi bác sĩ"];
@@ -217,7 +217,7 @@ function DayPlan({ dayPlan, servings, onRandomize, isToday, badge }) {
 
 function BlogSection() {
   return (
-    <section className="blog" id="blog">
+    <section className="blog" id="blog-list">
       <div className="section-title-row">
         <h2>Blog dinh dưỡng thận</h2>
         <p>Mẹo ăn uống an toàn, dễ áp dụng tại nhà cho người bệnh thận.</p>
@@ -241,6 +241,30 @@ function BlogSection() {
         ))}
       </div>
     </section>
+  );
+}
+
+function BlogPage({ onGoHome }) {
+  return (
+    <main className="content-wrap blog-page">
+      <section className="page-hero">
+        <p className="hero-eyebrow">Trang con: Blog dinh dưỡng</p>
+        <h1>Kiến thức dinh dưỡng cho người bệnh thận và gia đình chăm sóc</h1>
+        <p>
+          Tổng hợp các bài viết ngắn, dễ đọc, tập trung vào nguyên tắc ăn nhạt, kiểm soát kali,
+          phospho, đạm và cách theo dõi an toàn tại nhà.
+        </p>
+        <div className="hero-actions">
+          <button className="primary-link action-button" onClick={onGoHome}>
+            Về trang thực đơn
+          </button>
+          <a className="secondary-link" href="#blog-list">
+            Xem bài viết
+          </a>
+        </div>
+      </section>
+      <BlogSection />
+    </main>
   );
 }
 
@@ -273,12 +297,21 @@ function TrackingSection() {
 }
 
 export default function App() {
+  const getCurrentPage = () => {
+    if (typeof window === "undefined") return "home";
+    const params = new URLSearchParams(window.location.search);
+    return params.get("page") === "blog" ? "blog" : "home";
+  };
+
   const today = Math.min(new Date().getDate(), 30);
   const [plan, setPlan] = useState(() => generateMonthPlan());
   const [servings, setServings] = useState(2);
   const [activeTab, setActiveTab] = useState(noticeTabs[0]);
   const [selectedDay, setSelectedDay] = useState(today);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(getCurrentPage);
+  const [headerVisible, setHeaderVisible] = useState(true);
+  const [pendingHash, setPendingHash] = useState("");
   const nextSelectedDay = selectedDay === 30 ? 1 : selectedDay + 1;
 
   const featuredMeals = useMemo(() => {
@@ -329,11 +362,88 @@ export default function App() {
     setMobileMenuOpen(false);
   };
 
+  const navigateTo = ({ page = "home", hash = "" }) => {
+    const search = page === "blog" ? "?page=blog" : "";
+    const nextUrl = `${window.location.pathname}${search}${page === "home" ? hash : ""}`;
+    window.history.pushState({}, "", nextUrl);
+    setCurrentPage(page);
+    setPendingHash(page === "home" ? hash : "");
+    closeMobileMenu();
+
+    if (page === "blog") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+
+    if (!hash) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
+  const handleNavClick = (event, link) => {
+    event.preventDefault();
+    navigateTo({ page: link.page || "home", hash: link.href || "" });
+  };
+
+  useEffect(() => {
+    const onPopState = () => {
+      setCurrentPage(getCurrentPage());
+      setPendingHash(window.location.search.includes("page=blog") ? "" : window.location.hash);
+    };
+
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, []);
+
+  useEffect(() => {
+    if (currentPage !== "home") return;
+
+    if (!pendingHash) return;
+    window.requestAnimationFrame(() => {
+      const el = document.querySelector(pendingHash);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+      setPendingHash("");
+    });
+  }, [currentPage, pendingHash]);
+
+  useEffect(() => {
+    let lastScrollY = window.scrollY;
+
+    const onScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      if (mobileMenuOpen) {
+        setHeaderVisible(true);
+        lastScrollY = currentScrollY;
+        return;
+      }
+
+      if (currentScrollY < 40) {
+        setHeaderVisible(true);
+        lastScrollY = currentScrollY;
+        return;
+      }
+
+      const movingDown = currentScrollY > lastScrollY + 8;
+      const movingUp = currentScrollY < lastScrollY - 8;
+
+      if (movingDown) setHeaderVisible(false);
+      if (movingUp) setHeaderVisible(true);
+
+      lastScrollY = currentScrollY;
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [mobileMenuOpen]);
+
   const displayedPlans = [getDayPlan(selectedDay), getDayPlan(nextSelectedDay)].filter(Boolean);
 
   return (
     <div className="site-shell">
-      <header className="top-header">
+      <header className={`top-header ${headerVisible ? "is-visible" : "is-hidden"}`}>
         <div className="topline">
           <span>Kidney Care</span>
           <span>Nutrition Hub</span>
@@ -358,7 +468,11 @@ export default function App() {
           </button>
           <nav id="main-navigation" className={`main-nav ${mobileMenuOpen ? "is-open" : ""}`}>
             {navLinks.map((link) => (
-              <a key={link.href} href={link.href} onClick={closeMobileMenu}>
+              <a
+                key={`${link.label}-${link.page || "home"}`}
+                href={link.page === "blog" ? "?page=blog" : link.href}
+                onClick={(event) => handleNavClick(event, link)}
+              >
                 {link.label}
               </a>
             ))}
@@ -366,6 +480,9 @@ export default function App() {
         </div>
       </header>
 
+      {currentPage === "blog" ? (
+        <BlogPage onGoHome={() => navigateTo({ page: "home" })} />
+      ) : (
       <main className="content-wrap">
         <section className="hero" id="hero">
           <div className="hero-copy">
@@ -380,12 +497,18 @@ export default function App() {
               đạm theo nhu cầu điều trị. Dễ thay món, dễ theo dõi, dễ duy trì lâu dài.
             </p>
             <div className="hero-actions">
-              <a className="primary-link" href="#planner">Xem thực đơn hôm nay</a>
-              <a className="secondary-link" href="#guide">Cách sử dụng</a>
+              <a className="primary-link" href="#planner" onClick={(event) => handleNavClick(event, { page: "home", href: "#planner" })}>Xem thực đơn hôm nay</a>
+              <a className="secondary-link" href="#guide" onClick={(event) => handleNavClick(event, { page: "home", href: "#guide" })}>Cách sử dụng</a>
             </div>
             <div className="quick-grid">
               {quickMenus.map((item) => (
-                <a key={item.label} href={item.href}>{item.label}</a>
+                <a
+                  key={item.label}
+                  href={item.page === "blog" ? "?page=blog" : item.href}
+                  onClick={(event) => handleNavClick(event, item)}
+                >
+                  {item.label}
+                </a>
               ))}
             </div>
           </div>
@@ -396,61 +519,6 @@ export default function App() {
             />
           </div>
         </section>
-
-        <SafetyNotice />
-
-        <section className="notice" id="notice">
-          <div className="section-title-row">
-            <h2>Nguyên tắc ăn uống cho thận</h2>
-            <div className="tabs">
-              {noticeTabs.map((tab) => (
-                <button
-                  key={tab}
-                  className={tab === activeTab ? "active" : ""}
-                  onClick={() => setActiveTab(tab)}
-                >
-                  {tab}
-                </button>
-              ))}
-            </div>
-          </div>
-          <div className="notice-grid">
-            <div className="notice-cards">
-              {noticeByTab[activeTab].map((item) => (
-                <article key={`${activeTab}-${item.title}`} className="notice-card">
-                  <time>{item.date}</time>
-                  <h3>{item.title}</h3>
-                  <p>{item.text}</p>
-                </article>
-              ))}
-            </div>
-            <aside className="focus-card">
-              <p>Điểm cần nhớ</p>
-              <h3>Đừng tự thay đổi lượng nước, đạm hoặc thực phẩm giàu kali nếu chưa hỏi bác sĩ</h3>
-              <a href="#tracking">Xem dấu hiệu cần theo dõi</a>
-            </aside>
-          </div>
-        </section>
-
-        <GuideSection />
-
-        <section className="featured" id="featured">
-          <div className="section-title-row">
-            <h2>Món nên thử trong tuần</h2>
-            <p>Lựa chọn nhanh từ chính thực đơn thận đang được tạo.</p>
-          </div>
-          <div className="featured-track">
-            {featuredMeals.map((item) => (
-              <article key={item.id}>
-                <img src={item.image} alt={item.name} loading="lazy" />
-                <strong>{item.name}</strong>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <BlogSection />
-        <TrackingSection />
 
         <section className="planner" id="planner">
           <div className="planner-head">
@@ -507,7 +575,62 @@ export default function App() {
             ))}
           </div>
         </section>
+
+        <SafetyNotice />
+
+        <section className="notice" id="notice">
+          <div className="section-title-row">
+            <h2>Nguyên tắc ăn uống cho thận</h2>
+            <div className="tabs">
+              {noticeTabs.map((tab) => (
+                <button
+                  key={tab}
+                  className={tab === activeTab ? "active" : ""}
+                  onClick={() => setActiveTab(tab)}
+                >
+                  {tab}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="notice-grid">
+            <div className="notice-cards">
+              {noticeByTab[activeTab].map((item) => (
+                <article key={`${activeTab}-${item.title}`} className="notice-card">
+                  <time>{item.date}</time>
+                  <h3>{item.title}</h3>
+                  <p>{item.text}</p>
+                </article>
+              ))}
+            </div>
+            <aside className="focus-card">
+              <p>Điểm cần nhớ</p>
+              <h3>Đừng tự thay đổi lượng nước, đạm hoặc thực phẩm giàu kali nếu chưa hỏi bác sĩ</h3>
+              <a href="#tracking">Xem dấu hiệu cần theo dõi</a>
+            </aside>
+          </div>
+        </section>
+
+        <GuideSection />
+
+        <section className="featured" id="featured">
+          <div className="section-title-row">
+            <h2>Món nên thử trong tuần</h2>
+            <p>Lựa chọn nhanh từ chính thực đơn thận đang được tạo.</p>
+          </div>
+          <div className="featured-track">
+            {featuredMeals.map((item) => (
+              <article key={item.id}>
+                <img src={item.image} alt={item.name} loading="lazy" />
+                <strong>{item.name}</strong>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <TrackingSection />
       </main>
+      )}
 
       <footer className="footer">
         <div>
@@ -515,7 +638,7 @@ export default function App() {
           <p>Hỗ trợ xây dựng bữa ăn phù hợp cho bệnh thận mạn tính.</p>
         </div>
         <div className="footer-actions">
-          <button onClick={showToday}>Đến ngày hôm nay</button>
+          <button onClick={() => navigateTo({ page: "home", hash: "#planner" })}>Đến thực đơn</button>
           <button onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>Lên đầu trang</button>
         </div>
       </footer>
