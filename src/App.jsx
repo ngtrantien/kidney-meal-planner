@@ -244,7 +244,9 @@ function BlogSection() {
   );
 }
 
-function BlogPage({ onGoHome }) {
+function BlogPage({ onGoHome, activePostSlug, onSelectPost }) {
+  const activePost = POSTS.find((post) => post.slug === activePostSlug) || POSTS[0];
+
   return (
     <main className="content-wrap blog-page">
       <section className="page-hero">
@@ -259,11 +261,44 @@ function BlogPage({ onGoHome }) {
             Về trang thực đơn
           </button>
           <a className="secondary-link" href="#blog-list">
-            Xem bài viết
+            Xem thư viện bài viết
           </a>
         </div>
       </section>
-      <BlogSection />
+      <section className="blog-detail" id="blog-list">
+        <div className="section-title-row">
+          <h2>Thư viện bài viết</h2>
+          <p>Chọn một chủ đề ở bên trái để đọc tập trung hơn, không bị dàn trải như dạng card.</p>
+        </div>
+        <div className="blog-detail-layout">
+          <aside className="blog-sidebar">
+            {POSTS.map((post) => (
+              <button
+                key={post.slug}
+                type="button"
+                className={`blog-sidebar-item ${post.slug === activePost.slug ? "active" : ""}`}
+                onClick={() => onSelectPost(post.slug)}
+              >
+                <span>{post.date}</span>
+                <strong>{post.title}</strong>
+                <p>{post.excerpt}</p>
+              </button>
+            ))}
+          </aside>
+
+          <article className="blog-article">
+            <div className="blog-article-image">
+              <img src={activePost.image} alt={activePost.title} loading="lazy" />
+            </div>
+            <div className="blog-article-body">
+              <time>{activePost.date}</time>
+              <h2>{activePost.title}</h2>
+              <p className="blog-article-excerpt">{activePost.excerpt}</p>
+              <div dangerouslySetInnerHTML={{ __html: activePost.content }} />
+            </div>
+          </article>
+        </div>
+      </section>
     </main>
   );
 }
@@ -297,21 +332,28 @@ function TrackingSection() {
 }
 
 export default function App() {
-  const getCurrentPage = () => {
-    if (typeof window === "undefined") return "home";
+  const getCurrentRoute = () => {
+    if (typeof window === "undefined") {
+      return { page: "home", post: POSTS[0]?.slug || "" };
+    }
     const params = new URLSearchParams(window.location.search);
-    return params.get("page") === "blog" ? "blog" : "home";
+    const page = params.get("page") === "blog" ? "blog" : "home";
+    const post = params.get("post") || POSTS[0]?.slug || "";
+    return { page, post };
   };
 
+  const initialRoute = getCurrentRoute();
   const today = Math.min(new Date().getDate(), 30);
   const [plan, setPlan] = useState(() => generateMonthPlan());
   const [servings, setServings] = useState(2);
   const [activeTab, setActiveTab] = useState(noticeTabs[0]);
   const [selectedDay, setSelectedDay] = useState(today);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [currentPage, setCurrentPage] = useState(getCurrentPage);
+  const [currentPage, setCurrentPage] = useState(initialRoute.page);
+  const [activePostSlug, setActivePostSlug] = useState(initialRoute.post);
   const [headerVisible, setHeaderVisible] = useState(true);
   const [pendingHash, setPendingHash] = useState("");
+  const [activeSection, setActiveSection] = useState("hero");
   const nextSelectedDay = selectedDay === 30 ? 1 : selectedDay + 1;
 
   const featuredMeals = useMemo(() => {
@@ -362,11 +404,18 @@ export default function App() {
     setMobileMenuOpen(false);
   };
 
-  const navigateTo = ({ page = "home", hash = "" }) => {
-    const search = page === "blog" ? "?page=blog" : "";
+  const navigateTo = ({ page = "home", hash = "", post = POSTS[0]?.slug || "" }) => {
+    const searchParams = new URLSearchParams();
+    if (page === "blog") {
+      searchParams.set("page", "blog");
+      if (post) searchParams.set("post", post);
+    }
+
+    const search = searchParams.toString() ? `?${searchParams.toString()}` : "";
     const nextUrl = `${window.location.pathname}${search}${page === "home" ? hash : ""}`;
     window.history.pushState({}, "", nextUrl);
     setCurrentPage(page);
+    setActivePostSlug(post);
     setPendingHash(page === "home" ? hash : "");
     closeMobileMenu();
 
@@ -387,7 +436,9 @@ export default function App() {
 
   useEffect(() => {
     const onPopState = () => {
-      setCurrentPage(getCurrentPage());
+      const route = getCurrentRoute();
+      setCurrentPage(route.page);
+      setActivePostSlug(route.post);
       setPendingHash(window.location.search.includes("page=blog") ? "" : window.location.hash);
     };
 
@@ -407,6 +458,39 @@ export default function App() {
       setPendingHash("");
     });
   }, [currentPage, pendingHash]);
+
+  useEffect(() => {
+    if (currentPage !== "home") {
+      setActiveSection("");
+      return;
+    }
+
+    const sections = ["hero", "planner", "notice", "guide", "featured", "tracking"];
+    const onScrollSpy = () => {
+      let current = "hero";
+
+      sections.forEach((id) => {
+        const element = document.getElementById(id);
+        if (!element) return;
+        const rect = element.getBoundingClientRect();
+        if (rect.top <= 140) {
+          current = id;
+        }
+      });
+
+      setActiveSection(current);
+    };
+
+    onScrollSpy();
+    window.addEventListener("scroll", onScrollSpy, { passive: true });
+    return () => window.removeEventListener("scroll", onScrollSpy);
+  }, [currentPage]);
+
+  useEffect(() => {
+    if (currentPage === "blog" && !POSTS.some((post) => post.slug === activePostSlug)) {
+      setActivePostSlug(POSTS[0]?.slug || "");
+    }
+  }, [currentPage, activePostSlug]);
 
   useEffect(() => {
     let lastScrollY = window.scrollY;
@@ -471,6 +555,15 @@ export default function App() {
               <a
                 key={`${link.label}-${link.page || "home"}`}
                 href={link.page === "blog" ? "?page=blog" : link.href}
+                className={
+                  link.page === "blog"
+                    ? currentPage === "blog"
+                      ? "active"
+                      : ""
+                    : currentPage === "home" && link.href === `#${activeSection}`
+                      ? "active"
+                      : ""
+                }
                 onClick={(event) => handleNavClick(event, link)}
               >
                 {link.label}
@@ -481,7 +574,11 @@ export default function App() {
       </header>
 
       {currentPage === "blog" ? (
-        <BlogPage onGoHome={() => navigateTo({ page: "home" })} />
+        <BlogPage
+          activePostSlug={activePostSlug}
+          onGoHome={() => navigateTo({ page: "home" })}
+          onSelectPost={(slug) => navigateTo({ page: "blog", post: slug })}
+        />
       ) : (
       <main className="content-wrap">
         <section className="hero" id="hero">
@@ -504,7 +601,16 @@ export default function App() {
               {quickMenus.map((item) => (
                 <a
                   key={item.label}
-                  href={item.page === "blog" ? "?page=blog" : item.href}
+                  href={item.page === "blog" ? `?page=blog&post=${activePostSlug || POSTS[0]?.slug || ""}` : item.href}
+                  className={
+                    item.page === "blog"
+                      ? currentPage === "blog"
+                        ? "active"
+                        : ""
+                      : currentPage === "home" && item.href === `#${activeSection}`
+                        ? "active"
+                        : ""
+                  }
                   onClick={(event) => handleNavClick(event, item)}
                 >
                   {item.label}
