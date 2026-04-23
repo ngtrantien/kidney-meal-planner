@@ -32,6 +32,10 @@ body,
   min-height: 100%;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   font-family: "Manrope", sans-serif;
   color: var(--text);
@@ -52,11 +56,16 @@ button {
   border: 1px solid var(--line);
   border-radius: 28px;
   overflow: hidden;
+  animation: shellRise 520ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 
 .top-header {
   background: var(--surface);
   border-bottom: 1px solid var(--line);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  backdrop-filter: blur(14px);
 }
 
 .topline {
@@ -142,6 +151,27 @@ button {
   border: 1px solid var(--line);
   border-radius: 24px;
   padding: 24px;
+  position: relative;
+  overflow: hidden;
+  animation: revealUp 640ms 120ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: -30% auto auto -10%;
+  width: 340px;
+  height: 340px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(132, 169, 95, 0.22), transparent 64%);
+  pointer-events: none;
+  animation: slowDrift 9s ease-in-out infinite alternate;
+}
+
+.hero-copy,
+.hero-visual {
+  position: relative;
+  z-index: 1;
 }
 
 .hero-copy h1 {
@@ -150,6 +180,7 @@ button {
   font-size: clamp(30px, 3.3vw, 48px);
   line-height: 1.1;
   letter-spacing: -0.03em;
+  animation: textReveal 720ms 220ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 
 .hero-copy h1 span {
@@ -159,6 +190,7 @@ button {
 .hero-copy p {
   margin: 0;
   color: var(--text-soft);
+  animation: textReveal 720ms 320ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 
 .hero-eyebrow {
@@ -174,6 +206,7 @@ button {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 10px;
+  animation: revealUp 720ms 420ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 
 .quick-grid button {
@@ -185,18 +218,34 @@ button {
   font-weight: 700;
   color: var(--text-soft);
   cursor: pointer;
+  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease, color 180ms ease;
+}
+
+.quick-grid button:hover {
+  border-color: var(--green-pale);
+  color: var(--green-dark);
+  box-shadow: 0 10px 24px rgba(31, 42, 30, 0.08);
+  transform: translateY(-3px);
 }
 
 .hero-visual {
   border-radius: 999px 999px 0 999px;
   overflow: hidden;
   min-height: 360px;
+  transform-origin: center;
+  animation: imageBloom 760ms 220ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 
 .hero-visual img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transform: scale(1.03);
+  transition: transform 900ms ease;
+}
+
+.hero:hover .hero-visual img {
+  transform: scale(1.08);
 }
 
 .notice,
@@ -209,6 +258,8 @@ button {
   border: 1px solid var(--line);
   border-radius: 24px;
   padding: 18px;
+  animation: revealUp 620ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  scroll-margin-top: 92px;
 }
 
 .section-title-row {
@@ -247,12 +298,17 @@ button {
   font-weight: 700;
   padding: 7px 12px;
   cursor: pointer;
+  transition: transform 160ms ease, background 160ms ease, color 160ms ease, border-color 160ms ease;
 }
 
 .tabs button.active {
   background: var(--green);
   color: #fff;
   border-color: var(--green);
+}
+
+.tabs button:hover {
+  transform: translateY(-2px);
 }
 
 .notice-grid {
@@ -272,6 +328,13 @@ button {
   border-radius: 16px;
   background: #fff;
   padding: 14px;
+  transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
+}
+
+.notice-card:hover {
+  border-color: var(--line-strong);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-4px);
 }
 
 .notice-card time {
@@ -300,6 +363,20 @@ button {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+}
+
+.focus-card::after {
+  content: "";
+  position: absolute;
+  width: 160px;
+  height: 160px;
+  right: -50px;
+  bottom: -70px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.14);
+  animation: slowPulse 4.8s ease-in-out infinite;
 }
 
 .focus-card p {
@@ -339,6 +416,13 @@ button {
   overflow: hidden;
   background: #fff;
   border: 1px solid var(--line);
+  transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
+}
+
+.featured-track article:hover {
+  border-color: var(--line-strong);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-5px);
 }
 
 .featured-track img {
@@ -346,6 +430,11 @@ button {
   aspect-ratio: 16/10;
   object-fit: cover;
   display: block;
+  transition: transform 650ms ease;
+}
+
+.featured-track article:hover img {
+  transform: scale(1.07);
 }
 
 .featured-track strong {
@@ -365,6 +454,13 @@ button {
   overflow: hidden;
   background: #fff;
   border: 1px solid var(--line);
+  transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
+}
+
+.blog-card:hover {
+  border-color: var(--line-strong);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-5px);
 }
 
 .blog-image-wrap {
@@ -376,6 +472,11 @@ button {
   aspect-ratio: 16/10;
   object-fit: cover;
   display: block;
+  transition: transform 650ms ease;
+}
+
+.blog-card:hover .blog-image-wrap img {
+  transform: scale(1.07);
 }
 
 .blog-content {
@@ -405,6 +506,7 @@ button {
   margin-top: 10px;
   border-top: 1px dashed var(--line);
   padding-top: 10px;
+  transition: background 180ms ease;
 }
 
 .blog-content summary {
@@ -419,6 +521,7 @@ button {
   color: var(--text-soft);
   font-size: 13px;
   line-height: 1.6;
+  animation: revealUp 220ms ease both;
 }
 
 .education h2 {
@@ -438,6 +541,13 @@ button {
   background: #fff;
   border-radius: 18px;
   padding: 16px;
+  transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
+}
+
+.education-card:hover {
+  border-color: var(--line-strong);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-4px);
 }
 
 .education-card h3 {
@@ -531,11 +641,18 @@ button {
   align-items: center;
   gap: 8px;
   cursor: pointer;
+  transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease;
 }
 
 .regen-btn svg {
   width: 16px;
   height: 16px;
+}
+
+.regen-btn:hover {
+  background: var(--green-dark);
+  box-shadow: 0 10px 22px rgba(47, 111, 53, 0.22);
+  transform: translateY(-2px);
 }
 
 .day-jump {
@@ -554,12 +671,18 @@ button {
   border-radius: 11px;
   font-weight: 700;
   cursor: pointer;
+  transition: transform 160ms ease, background 160ms ease, color 160ms ease, border-color 160ms ease;
 }
 
 .day-jump button.today {
   background: var(--green);
   border-color: var(--green);
   color: #fff;
+}
+
+.day-jump button:hover {
+  border-color: var(--green);
+  transform: translateY(-2px);
 }
 
 .planner-list {
@@ -573,6 +696,13 @@ button {
   border-radius: 16px;
   background: #fff;
   overflow: hidden;
+  transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
+}
+
+.day-plan:hover {
+  border-color: var(--line-strong);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-3px);
 }
 
 .day-plan > header {
@@ -623,6 +753,11 @@ button {
   height: 100%;
   object-fit: cover;
   display: block;
+  transition: transform 650ms ease;
+}
+
+.meal-card:hover .meal-image-wrap img {
+  transform: scale(1.06);
 }
 
 .meal-badge {
@@ -726,11 +861,18 @@ button {
   justify-content: center;
   gap: 6px;
   cursor: pointer;
+  transition: transform 160ms ease, background 160ms ease, color 160ms ease;
 }
 
 .meal-body button svg {
   width: 14px;
   height: 14px;
+}
+
+.meal-body button:hover {
+  background: var(--green-pale);
+  color: var(--green-dark);
+  transform: translateY(-2px);
 }
 
 .footer {
@@ -770,6 +912,90 @@ button {
   font-weight: 700;
   color: var(--text-soft);
   cursor: pointer;
+  transition: transform 160ms ease, border-color 160ms ease, color 160ms ease;
+}
+
+.footer-actions button:hover {
+  border-color: var(--green);
+  color: var(--green-dark);
+  transform: translateY(-2px);
+}
+
+@keyframes shellRise {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes revealUp {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes textReveal {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes imageBloom {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes slowDrift {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(42px, 24px, 0);
+  }
+}
+
+@keyframes slowPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.45;
+  }
+  50% {
+    transform: scale(1.18);
+    opacity: 0.72;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 1ms !important;
+  }
 }
 
 @media (max-width: 1024px) {
