@@ -721,10 +721,47 @@ function repairMojibakeRobust(value) {
   }
 }
 
+const unsplashImage = (photoId) =>
+  `https://images.unsplash.com/${photoId}?auto=format&fit=crop&w=1000&q=78`;
+
+const MEAL_IMAGES = {
+  lunch_01: unsplashImage("photo-1760504526044-840cade997b2"),
+  lunch_02: unsplashImage("photo-1648096627542-be875f5be534"),
+  lunch_03: unsplashImage("photo-1666819691822-29a09f0992e5"),
+  lunch_04: unsplashImage("photo-1751618646882-4221d5e3b1c2"),
+  lunch_05: unsplashImage("photo-1754292148609-0d0a33282ff9"),
+  lunch_06: unsplashImage("photo-1666819691822-29a09f0992e5"),
+  lunch_07: unsplashImage("photo-1543363364-98d2b51b47fb"),
+  lunch_08: unsplashImage("photo-1761314025611-957a20e3e8a3"),
+  lunch_09: unsplashImage("photo-1760504526044-840cade997b2"),
+  lunch_10: unsplashImage("photo-1631709497146-a239ef373cf1"),
+  lunch_11: unsplashImage("photo-1751618646882-4221d5e3b1c2"),
+  lunch_12: unsplashImage("photo-1760504526044-840cade997b2"),
+  lunch_13: unsplashImage("photo-1666819691822-29a09f0992e5"),
+  lunch_14: unsplashImage("photo-1754292148609-0d0a33282ff9"),
+  lunch_15: unsplashImage("photo-1598103442097-8b74394b95c6"),
+  dinner_01: unsplashImage("photo-1754292148609-0d0a33282ff9"),
+  dinner_02: unsplashImage("photo-1648096627542-be875f5be534"),
+  dinner_03: unsplashImage("photo-1543363364-98d2b51b47fb"),
+  dinner_04: unsplashImage("photo-1760504526044-840cade997b2"),
+  dinner_05: unsplashImage("photo-1543363364-98d2b51b47fb"),
+  dinner_06: unsplashImage("photo-1666819691822-29a09f0992e5"),
+  dinner_07: unsplashImage("photo-1543363364-98d2b51b47fb"),
+  dinner_08: unsplashImage("photo-1761314025611-957a20e3e8a3"),
+  dinner_09: unsplashImage("photo-1503764654157-72d979d9af2f"),
+  dinner_10: unsplashImage("photo-1751618646882-4221d5e3b1c2"),
+  dinner_11: unsplashImage("photo-1754292148609-0d0a33282ff9"),
+  dinner_12: unsplashImage("photo-1598103442097-8b74394b95c6"),
+  dinner_13: unsplashImage("photo-1631709497146-a239ef373cf1"),
+  dinner_14: unsplashImage("photo-1761314025611-957a20e3e8a3"),
+  dinner_15: unsplashImage("photo-1543363364-98d2b51b47fb"),
+};
+
 function normalizeMeal(meal) {
   return {
     ...meal,
     name: repairMojibakeRobust(meal.name),
+    image: MEAL_IMAGES[meal.id],
     tags: meal.tags.map(repairMojibakeRobust),
     note: repairMojibakeRobust(meal.note),
     ingredients: meal.ingredients.map((ing) => ({
