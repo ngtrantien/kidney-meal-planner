@@ -1,6 +1,11 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { generateMonthPlan, getRandomMeal } from "./data/meals";
+import { POSTS } from "./data/posts";
 import "./App.css";
+import "./content.css";
+
+const assetPath = (path) => `${process.env.PUBLIC_URL}${path}`;
+const placeholderMealImage = assetPath("/images/meals/placeholder.svg");
 
 const IconRefresh = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -45,6 +50,11 @@ const IconLeaf = () => (
 
 function MealCard({ meal, session, servings, onRandomize, dayNum }) {
   const [open, setOpen] = useState(false);
+  const [imageSrc, setImageSrc] = useState(meal.image || placeholderMealImage);
+
+  useEffect(() => {
+    setImageSrc(meal.image || placeholderMealImage);
+  }, [meal.image]);
 
   const scale = (val) => {
     const result = val * servings;
@@ -61,6 +71,16 @@ function MealCard({ meal, session, servings, onRandomize, dayNum }) {
         <span>{sessionLabel}</span>
       </div>
 
+      <div className="meal-image-wrap">
+        <img
+          className="meal-image"
+          src={imageSrc}
+          alt={meal.name}
+          loading="lazy"
+          onError={() => setImageSrc(placeholderMealImage)}
+        />
+      </div>
+
       <div className="meal-header" onClick={() => setOpen(!open)}>
         <div className="meal-title-row">
           <h3 className="meal-name">{meal.name}</h3>
@@ -73,7 +93,7 @@ function MealCard({ meal, session, servings, onRandomize, dayNum }) {
           ))}
         </div>
 
-        <p className="meal-note">💡 {meal.note}</p>
+        <p className="meal-note">Gợi ý: {meal.note}</p>
       </div>
 
       {open && (
@@ -99,7 +119,7 @@ function MealCard({ meal, session, servings, onRandomize, dayNum }) {
           </div>
 
           <div className="section">
-            <h4 className="section-title">📋 Cách chế biến</h4>
+            <h4 className="section-title">Cách chế biến</h4>
             <ol className="steps-list">
               {meal.steps.map((step, i) => (
                 <li key={i}><span className="step-num">{i + 1}</span><span>{step}</span></li>
@@ -141,6 +161,35 @@ function DayRow({ entry, servings, onRandomize, isToday }) {
   );
 }
 
+function BlogSection() {
+  return (
+    <section className="blog-section" id="blog">
+      <div className="section-heading">
+        <span className="section-eyebrow">Góc kiến thức</span>
+        <h2>Bài viết chăm sóc thận</h2>
+        <p>Các ghi chú ngắn để gia đình dễ theo dõi chế độ ăn ít muối, ít kali và phù hợp hơn mỗi ngày.</p>
+      </div>
+
+      <div className="blog-grid">
+        {POSTS.map((post) => (
+          <article className="blog-card" key={post.slug}>
+            <img src={post.image} alt={post.title} loading="lazy" />
+            <div className="blog-card-body">
+              <span className="blog-date">{post.date}</span>
+              <h3>{post.title}</h3>
+              <p>{post.excerpt}</p>
+              <details>
+                <summary>Đọc nhanh</summary>
+                <div className="blog-content" dangerouslySetInnerHTML={{ __html: post.content }} />
+              </details>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 export default function App() {
   const [plan, setPlan] = useState(() => generateMonthPlan());
   const [servings, setServings] = useState(2);
@@ -179,7 +228,7 @@ export default function App() {
         <div className="header-shell">
           <div className="header-brand-row">
             <div className="logo-badge">
-              <span className="logo-icon">🫘</span>
+              <span className="logo-icon">🫛</span>
             </div>
 
             <div className="brand-copy">
@@ -247,6 +296,8 @@ export default function App() {
           />
         ))}
       </main>
+
+      <BlogSection />
 
       <footer className="app-footer">
         <p>Làm với <IconHeart /> để chăm sóc sức khỏe bố &nbsp;·&nbsp; Mỗi tháng bấm "Thực đơn mới" để xoay vòng</p>
