@@ -1,3 +1,5 @@
+import "./mealImages";
+
 const blogImage = `${process.env.PUBLIC_URL}/images/blog/placeholder.svg`;
 
 export const POSTS = [
