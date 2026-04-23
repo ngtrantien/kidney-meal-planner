@@ -201,6 +201,7 @@ button {
 
 .notice,
 .featured,
+.blog,
 .education,
 .planner {
   margin-top: 16px;
@@ -351,6 +352,73 @@ button {
   display: block;
   padding: 12px;
   font-size: 14px;
+}
+
+.blog-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.blog-card {
+  border-radius: 18px;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid var(--line);
+}
+
+.blog-image-wrap {
+  background: var(--green-pale);
+}
+
+.blog-image-wrap img {
+  width: 100%;
+  aspect-ratio: 16/10;
+  object-fit: cover;
+  display: block;
+}
+
+.blog-content {
+  padding: 14px;
+}
+
+.blog-content time {
+  color: var(--green);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.blog-content h3 {
+  margin: 8px 0 8px;
+  font-size: 17px;
+  line-height: 1.35;
+}
+
+.blog-content p {
+  margin: 0;
+  color: var(--text-soft);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.blog-content details {
+  margin-top: 10px;
+  border-top: 1px dashed var(--line);
+  padding-top: 10px;
+}
+
+.blog-content summary {
+  cursor: pointer;
+  color: var(--green-dark);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.blog-content details div {
+  margin-top: 8px;
+  color: var(--text-soft);
+  font-size: 13px;
+  line-height: 1.6;
 }
 
 .education h2 {
@@ -721,6 +789,10 @@ button {
   .featured-track {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .blog-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 820px) {
@@ -754,6 +826,7 @@ button {
   .hero,
   .notice,
   .featured,
+  .blog,
   .education,
   .planner {
     border-radius: 16px;
@@ -774,6 +847,7 @@ button {
   }
 
   .notice-cards,
+  .blog-grid,
   .education-grid {
     grid-template-columns: 1fr;
   }

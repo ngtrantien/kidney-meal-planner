@@ -166,6 +166,35 @@ function DayPlan({ dayPlan, servings, onRandomize, isToday }) {
   );
 }
 
+function BlogSection() {
+  return (
+    <section className="blog" id="blog">
+      <div className="section-title-row">
+        <h2>Blog dinh dưỡng thận</h2>
+        <p>Mẹo ăn uống an toàn, dễ áp dụng tại nhà cho người bệnh thận.</p>
+      </div>
+      <div className="blog-grid">
+        {POSTS.map((post) => (
+          <article className="blog-card" key={post.slug}>
+            <div className="blog-image-wrap">
+              <img src={post.image} alt={post.title} loading="lazy" />
+            </div>
+            <div className="blog-content">
+              <time>{post.date}</time>
+              <h3>{post.title}</h3>
+              <p>{post.excerpt}</p>
+              <details>
+                <summary>Đọc thêm</summary>
+                <div dangerouslySetInnerHTML={{ __html: post.content }} />
+              </details>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 export default function App() {
   const [plan, setPlan] = useState(() => generateMonthPlan());
   const [servings, setServings] = useState(2);
@@ -219,6 +248,7 @@ export default function App() {
             <a href="#hero">Tổng quan</a>
             <a href="#notice">Thông tin</a>
             <a href="#featured">Món gợi ý</a>
+            <a href="#blog">Blog</a>
             <a href="#planner">Thực đơn 30 ngày</a>
           </nav>
           <div className="head-actions">
@@ -237,13 +267,13 @@ export default function App() {
           <div className="hero-copy">
             <p className="hero-eyebrow">Thực đơn cho người bệnh thận</p>
             <h1>
-              Layout mới giống mẫu
+              Chăm sóc thận mỗi ngày
               <br />
-              <span>nhưng vẫn dùng cho thực đơn thận</span>
+              <span>với thực đơn cá nhân hóa dễ theo dõi</span>
             </h1>
             <p>
-              Kế hoạch 30 ngày gồm bữa trưa và bữa tối. Mỗi món được ưu tiên ít natri, kiểm soát
-              kali và phospho, đạm ở mức vừa phải.
+              Lên kế hoạch ăn uống 30 ngày với món ít natri, kiểm soát kali và phospho, cân đối
+              đạm theo nhu cầu điều trị. Dễ thay món, dễ theo dõi, dễ duy trì lâu dài.
             </p>
             <div className="quick-grid">
               {quickMenus.map((item) => (
@@ -306,6 +336,8 @@ export default function App() {
             ))}
           </div>
         </section>
+
+        <BlogSection />
 
         <section className="education">
           <h2>Thông tin giáo dục bệnh thận</h2>
