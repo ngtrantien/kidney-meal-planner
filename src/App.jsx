@@ -4,87 +4,69 @@ import { POSTS } from "./data/posts";
 import "./App.css";
 
 const quickMenus = [
-  "Hướng dẫn món ăn thận",
-  "Thông số dinh dưỡng",
-  "Q&A với bác sĩ",
-  "Lịch tái khám",
-  "Kho công thức",
-  "Thực đơn theo tuần",
-  "Mục tiêu uống nước",
+  { label: "Xem thực đơn", href: "#planner" },
+  { label: "Nguyên tắc ăn thận", href: "#notice" },
+  { label: "Hướng dẫn sử dụng", href: "#guide" },
+  { label: "Blog dinh dưỡng", href: "#blog" },
+  { label: "Theo dõi tại nhà", href: "#tracking" },
+  { label: "Món gợi ý", href: "#featured" },
 ];
 
-const noticeTabs = ["Thông báo", "Lời nhắc", "Kiến thức thận"];
+const noticeTabs = ["Nguyên tắc", "Lời nhắc", "Cần hỏi bác sĩ"];
 
 const noticeByTab = {
-  "Thông báo": [
+  "Nguyên tắc": [
     {
-      date: "08.15",
-      title: "Cập nhật thực đơn thận tháng này",
-      text: "Bổ sung các món ít natri và cân đối đạm cho bệnh thận mạn.",
+      date: "01",
+      title: "Ăn nhạt trước tiên",
+      text: "Giảm nước mắm, muối, hạt nêm, đồ hộp và thực phẩm chế biến sẵn để giảm gánh nặng cho thận.",
     },
     {
-      date: "08.10",
-      title: "Lịch tư vấn dinh dưỡng online",
-      text: "Mở khung 19:30 thứ 3 và thứ 6, đăng ký ngay trên hệ thống.",
+      date: "02",
+      title: "Theo dõi kali và phospho",
+      text: "Chọn rau củ phù hợp, luộc bỏ nước với một số loại rau và điều chỉnh theo kết quả xét nghiệm.",
     },
     {
-      date: "08.08",
-      title: "Mẫu nhật ký ăn uống mới",
-      text: "Bản in 1 trang để theo dõi muối, kali, phospho mỗi ngày.",
+      date: "03",
+      title: "Đạm vừa phải",
+      text: "Không tự tăng khẩu phần thịt cá. Lượng đạm nên theo giai đoạn bệnh và hướng dẫn điều trị.",
     },
   ],
   "Lời nhắc": [
     {
       date: "Mỗi ngày",
-      title: "Uống nước theo hướng dẫn cá nhân",
-      text: "Không tăng giảm lượng nước nếu chưa có tư vấn từ bác sĩ điều trị.",
+      title: "Ghi lại cân nặng và huyết áp",
+      text: "Theo dõi vào khung giờ cố định để phát hiện sớm phù, tăng huyết áp hoặc thay đổi bất thường.",
     },
     {
       date: "Mỗi bữa",
-      title: "Nêm nhạt, ưu tiên luộc hấp",
-      text: "Giảm nước mắm, hạt nêm, đồ đóng hộp và thực phẩm chế biến sẵn.",
+      title: "Ưu tiên luộc, hấp, nêm nhẹ",
+      text: "Dùng gừng, hành, tỏi, chanh và rau thơm để tăng mùi vị thay vì thêm nhiều gia vị mặn.",
     },
     {
       date: "Hàng tuần",
-      title: "Theo dõi cân nặng và huyết áp",
-      text: "Ghi lại thay đổi bất thường để trao đổi trong lần tái khám.",
+      title: "Xem lại món hợp khẩu vị",
+      text: "Đổi món không phù hợp, giữ lại các món dễ ăn và mang nhật ký ăn uống khi tái khám.",
     },
   ],
-  "Kiến thức thận": [
+  "Cần hỏi bác sĩ": [
     {
-      date: "Kiến thức",
-      title: "Vì sao cần giảm natri?",
-      text: "Giảm muối giúp hạn chế phù và giảm gánh nặng cho thận và tim mạch.",
+      date: "Quan trọng",
+      title: "Lượng nước uống mỗi ngày",
+      text: "Không tự tăng hoặc giảm lượng nước nếu đang phù, tiểu ít, suy tim hoặc có chỉ định hạn chế dịch.",
     },
     {
-      date: "Kiến thức",
-      title: "Kiểm soát kali như thế nào?",
-      text: "Ưu tiên rau củ ít kali, cân đối khẩu phần theo kết quả xét nghiệm.",
+      date: "Quan trọng",
+      title: "Mức kali/phospho trong máu",
+      text: "Nếu kali hoặc phospho cao, cần cá nhân hóa thực đơn kỹ hơn thay vì dùng thực đơn mẫu.",
     },
     {
-      date: "Kiến thức",
-      title: "Đạm vừa phải trong CKD",
-      text: "Bố trí đạm theo hướng dẫn điều trị để tránh tăng ure máu.",
+      date: "Quan trọng",
+      title: "Giai đoạn bệnh thận",
+      text: "Người lọc máu, bệnh thận giai đoạn muộn hoặc có bệnh nền cần hướng dẫn riêng.",
     },
   ],
 };
-
-function IconSearch() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.8" />
-      <path d="M20 20L16.5 16.5" stroke="currentColor" strokeWidth="1.8" />
-    </svg>
-  );
-}
-
-function IconMenu() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="M4 7H20M4 12H20M4 17H20" stroke="currentColor" strokeWidth="1.8" />
-    </svg>
-  );
-}
 
 function IconRefresh() {
   return (
@@ -99,12 +81,54 @@ function IconRefresh() {
   );
 }
 
+function SafetyNotice() {
+  return (
+    <section className="safety-note" aria-label="Lưu ý y tế">
+      <strong>Lưu ý y tế</strong>
+      <p>
+        Thực đơn trên website chỉ là gợi ý tham khảo cho chế độ ăn hỗ trợ bệnh thận. Người bệnh cần
+        ưu tiên hướng dẫn của bác sĩ hoặc chuyên gia dinh dưỡng, đặc biệt về lượng nước, đạm, kali,
+        phospho và natri.
+      </p>
+    </section>
+  );
+}
+
+function GuideSection() {
+  return (
+    <section className="guide" id="guide">
+      <div className="section-title-row">
+        <h2>Cách dùng thực đơn</h2>
+        <p>Ba bước ngắn để gia đình dùng planner rõ ràng hơn mỗi ngày.</p>
+      </div>
+      <div className="guide-steps">
+        <article>
+          <span>1</span>
+          <h3>Chọn ngày và khẩu phần</h3>
+          <p>Mặc định hiển thị hôm nay và ngày mai. Có thể đổi ngày, tăng giảm số người ăn.</p>
+        </article>
+        <article>
+          <span>2</span>
+          <h3>Xem món và đổi nếu cần</h3>
+          <p>Nếu món không hợp khẩu vị, dùng nút đổi món để thay bằng món cùng nhóm bữa.</p>
+        </article>
+        <article>
+          <span>3</span>
+          <h3>Ghi lại phản ứng cơ thể</h3>
+          <p>Theo dõi phù, huyết áp, cân nặng, lượng nước tiểu và trao đổi khi tái khám.</p>
+        </article>
+      </div>
+    </section>
+  );
+}
+
 function MealCard({ label, meal, servings, onRandomize }) {
-  const scaledIngredients = meal.ingredients.slice(0, 4).map((item) => {
+  const scaledIngredients = meal.ingredients.map((item) => {
     const amount = item.per1 * servings;
     const display = Number.isInteger(amount) ? amount : amount.toFixed(1);
     return `${item.name}: ${display}${item.unit}`;
   });
+  const shortIngredients = scaledIngredients.slice(0, 4);
   const quickSteps = meal.steps.slice(0, 3);
 
   return (
@@ -122,7 +146,7 @@ function MealCard({ label, meal, servings, onRandomize }) {
         </div>
         <p>{meal.note}</p>
         <ul>
-          {scaledIngredients.map((line) => (
+          {shortIngredients.map((line) => (
             <li key={`${meal.id}-${line}`}>{line}</li>
           ))}
         </ul>
@@ -132,6 +156,23 @@ function MealCard({ label, meal, servings, onRandomize }) {
             <li key={`${meal.id}-step-${index + 1}`}>{step}</li>
           ))}
         </ol>
+        <details className="meal-details">
+          <summary>Xem đầy đủ nguyên liệu và cách nấu</summary>
+          <div>
+            <h6>Nguyên liệu đầy đủ</h6>
+            <ul>
+              {scaledIngredients.map((line) => (
+                <li key={`${meal.id}-full-${line}`}>{line}</li>
+              ))}
+            </ul>
+            <h6>Các bước nấu</h6>
+            <ol>
+              {meal.steps.map((step, index) => (
+                <li key={`${meal.id}-full-step-${index + 1}`}>{step}</li>
+              ))}
+            </ol>
+          </div>
+        </details>
         <button onClick={onRandomize}>
           <IconRefresh />
           Đổi món này
@@ -190,6 +231,34 @@ function BlogSection() {
             </div>
           </article>
         ))}
+      </div>
+    </section>
+  );
+}
+
+function TrackingSection() {
+  return (
+    <section className="education" id="tracking">
+      <h2>Theo dõi sức khỏe tại nhà</h2>
+      <div className="education-grid">
+        <article className="education-card">
+          <h3>Nhật ký nên ghi</h3>
+          <ul>
+            <li>Cân nặng buổi sáng sau khi đi tiểu</li>
+            <li>Huyết áp theo giờ cố định, nên đo 2 lần/ngày</li>
+            <li>Lượng nước uống, nước tiểu và dấu hiệu phù</li>
+            <li>Món ăn gây khó chịu, chán ăn hoặc đầy bụng</li>
+          </ul>
+        </article>
+        <article className="education-card">
+          <h3>Khi nào cần hỏi bác sĩ?</h3>
+          <ul>
+            <li>Tăng cân nhanh, phù chân, khó thở hoặc tiểu ít hơn rõ rệt</li>
+            <li>Huyết áp tăng cao liên tục hoặc chóng mặt bất thường</li>
+            <li>Kết quả xét nghiệm kali, phospho, ure, creatinine thay đổi</li>
+            <li>Muốn đổi chế độ đạm, nước uống hoặc dùng thực phẩm bổ sung</li>
+          </ul>
+        </article>
       </div>
     </section>
   );
@@ -264,19 +333,11 @@ export default function App() {
           </div>
           <nav>
             <a href="#hero">Tổng quan</a>
-            <a href="#notice">Thông tin</a>
-            <a href="#featured">Món gợi ý</a>
+            <a href="#notice">Nguyên tắc</a>
+            <a href="#guide">Cách dùng</a>
             <a href="#blog">Blog</a>
-            <a href="#planner">Thực đơn 30 ngày</a>
+            <a href="#planner">Thực đơn</a>
           </nav>
-          <div className="head-actions">
-            <button aria-label="Search">
-              <IconSearch />
-            </button>
-            <button aria-label="Menu">
-              <IconMenu />
-            </button>
-          </div>
         </div>
       </header>
 
@@ -293,9 +354,13 @@ export default function App() {
               Lên kế hoạch ăn uống 30 ngày với món ít natri, kiểm soát kali và phospho, cân đối
               đạm theo nhu cầu điều trị. Dễ thay món, dễ theo dõi, dễ duy trì lâu dài.
             </p>
+            <div className="hero-actions">
+              <a className="primary-link" href="#planner">Xem thực đơn hôm nay</a>
+              <a className="secondary-link" href="#guide">Cách sử dụng</a>
+            </div>
             <div className="quick-grid">
               {quickMenus.map((item) => (
-                <button key={item}>{item}</button>
+                <a key={item.label} href={item.href}>{item.label}</a>
               ))}
             </div>
           </div>
@@ -307,9 +372,11 @@ export default function App() {
           </div>
         </section>
 
+        <SafetyNotice />
+
         <section className="notice" id="notice">
           <div className="section-title-row">
-            <h2>Bản tin dinh dưỡng thận</h2>
+            <h2>Nguyên tắc ăn uống cho thận</h2>
             <div className="tabs">
               {noticeTabs.map((tab) => (
                 <button
@@ -333,17 +400,19 @@ export default function App() {
               ))}
             </div>
             <aside className="focus-card">
-              <p>Chủ đề trọng tâm</p>
-              <h3>Giảm muối thông minh trong bữa ăn hằng ngày</h3>
-              <button>Đọc hướng dẫn</button>
+              <p>Điểm cần nhớ</p>
+              <h3>Đừng tự thay đổi lượng nước, đạm hoặc thực phẩm giàu kali nếu chưa hỏi bác sĩ</h3>
+              <a href="#tracking">Xem dấu hiệu cần theo dõi</a>
             </aside>
           </div>
         </section>
 
+        <GuideSection />
+
         <section className="featured" id="featured">
           <div className="section-title-row">
-            <h2>Món gợi ý trong tháng</h2>
-            <p>Lựa chọn từ chính thực đơn thận đang được tạo.</p>
+            <h2>Món nên thử trong tuần</h2>
+            <p>Lựa chọn nhanh từ chính thực đơn thận đang được tạo.</p>
           </div>
           <div className="featured-track">
             {featuredMeals.map((item) => (
@@ -356,32 +425,7 @@ export default function App() {
         </section>
 
         <BlogSection />
-
-        <section className="education">
-          <h2>Thông tin giáo dục bệnh thận</h2>
-          <div className="education-grid">
-            <article className="education-card">
-              <h3>Lịch theo dõi sức khỏe</h3>
-              <ul>
-                <li>Cân nặng: ghi vào buổi sáng sau khi đi tiểu</li>
-                <li>Huyết áp: đo 2 lần/ngày, ghi theo giờ cố định</li>
-                <li>Nước tiểu: theo dõi màu sắc và lượng</li>
-                <li>Tư vấn: mang nhật ký ăn uống khi tái khám</li>
-              </ul>
-            </article>
-            <article className="education-card">
-              <h3>Bài viết hữu ích</h3>
-              <ul>
-                {POSTS.map((post) => (
-                  <li key={post.slug}>
-                    <strong>{post.title}</strong>
-                    <span>{post.date}</span>
-                  </li>
-                ))}
-              </ul>
-            </article>
-          </div>
-        </section>
+        <TrackingSection />
 
         <section className="planner" id="planner">
           <div className="planner-head">
