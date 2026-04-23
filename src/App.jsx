@@ -141,12 +141,12 @@ function MealCard({ label, meal, servings, onRandomize }) {
   );
 }
 
-function DayPlan({ dayPlan, servings, onRandomize, isToday }) {
+function DayPlan({ dayPlan, servings, onRandomize, isToday, badge }) {
   return (
     <section className={`day-plan ${isToday ? "is-today" : ""}`} id={`day-${dayPlan.day}`}>
       <header>
         <h4>Ngày {dayPlan.day}</h4>
-        {isToday && <span>Hôm nay</span>}
+        {(badge || isToday) && <span>{badge || "Hôm nay"}</span>}
       </header>
       <div className="day-plan-grid">
         <MealCard
@@ -196,10 +196,12 @@ function BlogSection() {
 }
 
 export default function App() {
+  const today = Math.min(new Date().getDate(), 30);
   const [plan, setPlan] = useState(() => generateMonthPlan());
   const [servings, setServings] = useState(2);
   const [activeTab, setActiveTab] = useState(noticeTabs[0]);
-  const today = Math.min(new Date().getDate(), 30);
+  const [selectedDay, setSelectedDay] = useState(today);
+  const nextSelectedDay = selectedDay === 30 ? 1 : selectedDay + 1;
 
   const featuredMeals = useMemo(() => {
     return plan.slice(0, 4).map((entry, idx) => {
@@ -213,6 +215,20 @@ export default function App() {
     if (el) {
       el.scrollIntoView({ behavior: "smooth", block: "start" });
     }
+  };
+
+  const getDayPlan = (day) => plan.find((entry) => entry.day === day);
+
+  const getDayBadge = (day) => {
+    if (day === today) return "Hôm nay";
+    if (day === (today === 30 ? 1 : today + 1)) return "Ngày mai";
+    if (day === selectedDay) return "Ngày đã chọn";
+    return "Ngày kế tiếp";
+  };
+
+  const showToday = () => {
+    setSelectedDay(today);
+    window.requestAnimationFrame(() => scrollToDay(today));
   };
 
   const randomizeOne = (day, session) => {
@@ -230,6 +246,8 @@ export default function App() {
   const regeneratePlan = () => {
     setPlan(generateMonthPlan());
   };
+
+  const displayedPlans = [getDayPlan(selectedDay), getDayPlan(nextSelectedDay)].filter(Boolean);
 
   return (
     <div className="site-shell">
@@ -369,9 +387,19 @@ export default function App() {
           <div className="planner-head">
             <div>
               <h2>Thực đơn thận 30 ngày</h2>
-              <p>Chọn ngày để nhảy nhanh, đổi món theo bữa và điều chỉnh số khẩu phần.</p>
+              <p>Mặc định xem hôm nay và ngày mai. Chọn ngày bất kỳ để xem ngày đó và ngày kế tiếp.</p>
             </div>
             <div className="planner-controls">
+              <label className="day-select">
+                <span>Chọn ngày</span>
+                <select value={selectedDay} onChange={(event) => setSelectedDay(Number(event.target.value))}>
+                  {plan.map((entry) => (
+                    <option key={entry.day} value={entry.day}>
+                      Ngày {entry.day}
+                    </option>
+                  ))}
+                </select>
+              </label>
               <div className="servings">
                 <span>Khẩu phần</span>
                 <button onClick={() => setServings((v) => Math.max(1, v - 1))}>-</button>
@@ -385,26 +413,27 @@ export default function App() {
             </div>
           </div>
 
-          <div className="day-jump">
-            {Array.from({ length: 30 }, (_, i) => i + 1).map((day) => (
-              <button
-                key={day}
-                className={day === today ? "today" : ""}
-                onClick={() => scrollToDay(day)}
-              >
-                {day}
-              </button>
-            ))}
+          <div className="planner-summary">
+            <button className={selectedDay === today ? "active" : ""} onClick={showToday}>
+              Hôm nay
+            </button>
+            <button onClick={() => setSelectedDay(today === 30 ? 1 : today + 1)}>
+              Ngày mai
+            </button>
+            <span>
+              Đang xem ngày {selectedDay} và ngày {nextSelectedDay}
+            </span>
           </div>
 
           <div className="planner-list">
-            {plan.map((entry) => (
+            {displayedPlans.map((entry) => (
               <DayPlan
                 key={entry.day}
                 dayPlan={entry}
                 servings={servings}
                 onRandomize={randomizeOne}
                 isToday={entry.day === today}
+                badge={getDayBadge(entry.day)}
               />
             ))}
           </div>
@@ -417,7 +446,7 @@ export default function App() {
           <p>Hỗ trợ xây dựng bữa ăn phù hợp cho bệnh thận mạn tính.</p>
         </div>
         <div className="footer-actions">
-          <button onClick={() => scrollToDay(today)}>Đến ngày hôm nay</button>
+          <button onClick={showToday}>Đến ngày hôm nay</button>
           <button onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>Lên đầu trang</button>
         </div>
       </footer>

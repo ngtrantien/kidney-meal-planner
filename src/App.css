@@ -597,6 +597,40 @@ button {
   align-items: center;
 }
 
+.day-select {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #fff;
+  padding: 6px 10px 6px 14px;
+}
+
+.day-select span {
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.day-select select {
+  min-width: 108px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--surface-soft);
+  color: var(--text);
+  cursor: pointer;
+  font-weight: 800;
+  padding: 8px 28px 8px 10px;
+  outline: none;
+}
+
+.day-select select:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 2px;
+}
+
 .servings {
   display: flex;
   align-items: center;
@@ -653,6 +687,44 @@ button {
   background: var(--green-dark);
   box-shadow: 0 10px 22px rgba(47, 111, 53, 0.22);
   transform: translateY(-2px);
+}
+
+.planner-summary {
+  margin-top: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: linear-gradient(90deg, #ffffff 0%, #f4f8ef 100%);
+  padding: 10px;
+}
+
+.planner-summary button {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--text-soft);
+  cursor: pointer;
+  font-weight: 800;
+  padding: 8px 12px;
+  transition: transform 160ms ease, background 160ms ease, color 160ms ease, border-color 160ms ease;
+}
+
+.planner-summary button:hover,
+.planner-summary button.active {
+  border-color: var(--green);
+  background: var(--green);
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+.planner-summary span {
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 700;
+  margin-left: auto;
 }
 
 .day-jump {
@@ -1084,6 +1156,22 @@ button {
 
   .planner-controls {
     flex-wrap: wrap;
+  }
+
+  .day-select,
+  .servings,
+  .regen-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .day-select select {
+    flex: 1;
+  }
+
+  .planner-summary span {
+    width: 100%;
+    margin-left: 0;
   }
 
   .day-plan-grid {
