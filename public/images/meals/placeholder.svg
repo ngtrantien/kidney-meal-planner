@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" role="img" aria-labelledby="title desc">
+  <title id="title">Ảnh món ăn</title>
+  <desc id="desc">Placeholder cho ảnh món ăn trong thực đơn thận lành</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#fff7e8"/>
+      <stop offset="52%" stop-color="#edf8ef"/>
+      <stop offset="100%" stop-color="#dff0e3"/>
+    </linearGradient>
+    <radialGradient id="plate" cx="50%" cy="45%" r="50%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#e8efe6"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="675" fill="url(#bg)"/>
+  <circle cx="600" cy="350" r="205" fill="url(#plate)" stroke="#cfdacd" stroke-width="10"/>
+  <circle cx="600" cy="350" r="130" fill="#f5fbf6" stroke="#dfe7dd" stroke-width="6"/>
+  <path d="M545 330c52-88 134-107 224-92-28 88-96 141-188 142 42-30 79-68 105-113-58 13-105 43-141 63Z" fill="#3b8252"/>
+  <path d="M448 404c54-73 129-84 210-62-34 72-100 111-181 101 40-20 76-50 103-88-52 4-96 24-132 49Z" fill="#c58b30" opacity=".85"/>
+  <text x="600" y="590" text-anchor="middle" font-family="Arial, sans-serif" font-size="42" font-weight="700" fill="#2e6d43">Thực Đơn Thận Lành</text>
+</svg>
