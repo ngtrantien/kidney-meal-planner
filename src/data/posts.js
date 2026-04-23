@@ -17,6 +17,10 @@ const RAW_POSTS = [
     title: "Chế độ ăn ít kali cho người bệnh thận: cách chọn thực phẩm và giữ bữa ăn dễ áp dụng",
     date: "23/04/2026",
     image: BLOG_IMAGES["che-do-an-it-kali"],
+    metaTitle: "Chế độ ăn ít kali cho người bệnh thận | Hướng dẫn chi tiết dễ áp dụng",
+    metaDescription:
+      "Hướng dẫn chi tiết về chế độ ăn ít kali cho người bệnh thận: thực phẩm nên hạn chế, cách nấu giảm kali và cách tổ chức bữa ăn an toàn hơn mỗi ngày.",
+    relatedSlugs: ["kiem-soat-phospho-hang-ngay", "giam-muoi-trong-bua-an", "lap-thuc-don-30-ngay"],
     excerpt:
       "Bài viết giải thích rõ vì sao cần kiểm soát kali, cách nhận diện nhóm thực phẩm dễ làm kali tăng cao, và cách nấu nướng để bữa ăn hằng ngày vẫn nhẹ nhàng, dễ thực hiện.",
     content: `
@@ -41,6 +45,10 @@ const RAW_POSTS = [
     title: "Giảm muối mà bữa ăn vẫn ngon: cách nêm nếm cho người bệnh thận mà gia đình vẫn ăn được",
     date: "23/04/2026",
     image: BLOG_IMAGES["giam-muoi-trong-bua-an"],
+    metaTitle: "Giảm muối mà bữa ăn vẫn ngon | Cách nêm nếm cho người bệnh thận",
+    metaDescription:
+      "Cách giảm muối trong bữa ăn cho người bệnh thận mà món vẫn ngon, dễ ăn và phù hợp cho cả gia đình: mẹo nêm nếm, thay gia vị và tránh natri ẩn.",
+    relatedSlugs: ["doc-nhan-thuc-pham-dong-goi", "che-do-an-it-kali", "an-ngoai-khi-bi-benh-than"],
     excerpt:
       "Không ít gia đình nghĩ rằng ăn nhạt đồng nghĩa với nhạt nhẽo. Bài viết này hướng dẫn cách giảm natri trong thực tế, từ nêm nếm, chọn gia vị thay thế đến thói quen nấu nướng dễ duy trì lâu dài.",
     content: `
@@ -63,6 +71,10 @@ const RAW_POSTS = [
     title: "Cách dùng thực đơn 30 ngày: xoay vòng món ăn, đổi món hợp lý và giữ kế hoạch bền vững",
     date: "23/04/2026",
     image: BLOG_IMAGES["lap-thuc-don-30-ngay"],
+    metaTitle: "Cách dùng thực đơn 30 ngày cho người bệnh thận | Planner chi tiết",
+    metaDescription:
+      "Hướng dẫn dùng planner 30 ngày cho người bệnh thận: cách đổi món, điều chỉnh khẩu phần, giữ kế hoạch linh hoạt và bền vững trong gia đình.",
+    relatedSlugs: ["uoc-luong-khau-phan-dam", "nhat-ky-an-uong-va-tai-kham", "giam-muoi-trong-bua-an"],
     excerpt:
       "Thực đơn 30 ngày không nên dùng như lịch cứng. Bài viết này hướng dẫn cách xem planner đúng cách, cách đổi món khi không hợp khẩu vị và cách điều chỉnh khẩu phần theo số người ăn mà vẫn giữ nguyên nguyên tắc bệnh thận.",
     content: `
@@ -85,6 +97,10 @@ const RAW_POSTS = [
     title: "Kiểm soát phospho trong bữa ăn hằng ngày: điều người bệnh thận thường bỏ sót",
     date: "24/04/2026",
     image: BLOG_IMAGES["kiem-soat-phospho-hang-ngay"],
+    metaTitle: "Kiểm soát phospho cho người bệnh thận | Những điều thường bị bỏ sót",
+    metaDescription:
+      "Giải thích cách kiểm soát phospho trong bữa ăn hằng ngày cho người bệnh thận, nhận diện thực phẩm nhiều phospho và giảm gánh nặng cho xương, tim mạch.",
+    relatedSlugs: ["che-do-an-it-kali", "doc-nhan-thuc-pham-dong-goi", "uoc-luong-khau-phan-dam"],
     excerpt:
       "Phospho không chỉ đến từ nội tạng hay sữa mà còn ẩn trong nhiều thực phẩm tiện lợi. Bài viết này giúp nhận diện nguồn phospho, cách ưu tiên món ăn ít gánh nặng hơn cho thận và xương.",
     content: `
@@ -106,6 +122,10 @@ const RAW_POSTS = [
     title: "Ước lượng khẩu phần đạm: ăn bao nhiêu là vừa cho người bệnh thận?",
     date: "24/04/2026",
     image: BLOG_IMAGES["uoc-luong-khau-phan-dam"],
+    metaTitle: "Ước lượng khẩu phần đạm cho người bệnh thận | Ăn bao nhiêu là vừa?",
+    metaDescription:
+      "Bài viết chi tiết giúp ước lượng khẩu phần đạm phù hợp cho người bệnh thận, tránh ăn quá ít gây suy dinh dưỡng hoặc quá nhiều làm tăng gánh nặng cho thận.",
+    relatedSlugs: ["lap-thuc-don-30-ngay", "kiem-soat-phospho-hang-ngay", "nhat-ky-an-uong-va-tai-kham"],
     excerpt:
       "Đạm quá ít dễ suy dinh dưỡng, nhưng quá nhiều lại tăng gánh nặng cho thận. Bài viết này hướng dẫn cách nhìn khẩu phần bằng mắt và tổ chức nguồn đạm hợp lý trong bữa ăn hằng ngày.",
     content: `
@@ -129,6 +149,10 @@ const RAW_POSTS = [
     title: "Ăn ngoài khi bị bệnh thận: gọi món thế nào để đỡ mặn, đỡ rủi ro hơn",
     date: "24/04/2026",
     image: BLOG_IMAGES["an-ngoai-khi-bi-benh-than"],
+    metaTitle: "Ăn ngoài khi bị bệnh thận | Cách gọi món an toàn hơn",
+    metaDescription:
+      "Gợi ý cách ăn ngoài khi bị bệnh thận: chọn quán, chọn món, dặn bếp và giảm rủi ro từ đồ ăn mặn, nhiều sốt hoặc khó kiểm soát khẩu phần.",
+    relatedSlugs: ["giam-muoi-trong-bua-an", "doc-nhan-thuc-pham-dong-goi", "lap-thuc-don-30-ngay"],
     excerpt:
       "Không phải lúc nào cũng có thể nấu ở nhà. Bài viết này gợi ý cách chọn quán, chọn món và dặn bếp sao cho bữa ăn bên ngoài vẫn an toàn hơn cho người bệnh thận.",
     content: `
@@ -150,6 +174,10 @@ const RAW_POSTS = [
     title: "Đọc nhãn thực phẩm đóng gói: cách nhìn nhanh để tránh natri, phospho và đường ẩn",
     date: "24/04/2026",
     image: BLOG_IMAGES["doc-nhan-thuc-pham-dong-goi"],
+    metaTitle: "Đọc nhãn thực phẩm đóng gói cho người bệnh thận | Cách nhìn nhanh",
+    metaDescription:
+      "Hướng dẫn đọc nhãn thực phẩm đóng gói cho người bệnh thận: nhận diện natri, phospho, đường ẩn và chọn sản phẩm an toàn hơn khi mua sắm.",
+    relatedSlugs: ["giam-muoi-trong-bua-an", "kiem-soat-phospho-hang-ngay", "an-ngoai-khi-bi-benh-than"],
     excerpt:
       "Nhiều thực phẩm nhìn có vẻ lành mạnh nhưng lại chứa rất nhiều natri hoặc phụ gia. Bài viết này giúp gia đình đọc nhãn nhanh, biết nên ưu tiên gì và bỏ qua gì khi mua đồ đóng gói.",
     content: `
@@ -171,6 +199,10 @@ const RAW_POSTS = [
     title: "Nhật ký ăn uống và tái khám: ghi gì để bác sĩ dễ điều chỉnh thực đơn hơn",
     date: "24/04/2026",
     image: BLOG_IMAGES["nhat-ky-an-uong-va-tai-kham"],
+    metaTitle: "Nhật ký ăn uống và tái khám cho người bệnh thận | Ghi gì cho hiệu quả",
+    metaDescription:
+      "Hướng dẫn ghi nhật ký ăn uống và theo dõi triệu chứng để bác sĩ, chuyên gia dinh dưỡng dễ điều chỉnh thực đơn cho người bệnh thận trong lần tái khám.",
+    relatedSlugs: ["lap-thuc-don-30-ngay", "uoc-luong-khau-phan-dam", "che-do-an-it-kali"],
     excerpt:
       "Nhật ký ăn uống không cần cầu kỳ. Bài viết này hướng dẫn cách ghi ngắn gọn nhưng đủ hữu ích để lần tái khám sau bác sĩ hoặc chuyên gia dinh dưỡng có thể điều chỉnh thực đơn sát hơn.",
     content: `
@@ -245,6 +277,8 @@ function normalizePost(post) {
   return {
     ...post,
     title: repairMojibakeRobust(post.title),
+    metaTitle: repairMojibakeRobust(post.metaTitle),
+    metaDescription: repairMojibakeRobust(post.metaDescription),
     excerpt: repairMojibakeRobust(post.excerpt),
     content: repairMojibakeRobust(post.content),
   };

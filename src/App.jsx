@@ -245,6 +245,9 @@ function BlogSection() {
 
 function BlogPage({ onGoHome, activePostSlug, onSelectPost }) {
   const activePost = POSTS.find((post) => post.slug === activePostSlug) || POSTS[0];
+  const relatedPosts = (activePost.relatedSlugs || [])
+    .map((slug) => POSTS.find((post) => post.slug === slug))
+    .filter(Boolean);
   const [copyLabel, setCopyLabel] = useState("Sao chép link bài viết");
   const postUrl =
     typeof window === "undefined"
@@ -265,6 +268,48 @@ function BlogPage({ onGoHome, activePostSlug, onSelectPost }) {
   useEffect(() => {
     setCopyLabel("Sao chép link bài viết");
   }, [activePostSlug]);
+
+  useEffect(() => {
+    const previousTitle = document.title;
+    const ensureMeta = (selector, attribute, value) => {
+      let tag = document.head.querySelector(selector);
+      if (!tag) {
+        tag = document.createElement("meta");
+        tag.setAttribute(attribute, value);
+        document.head.appendChild(tag);
+      }
+      return tag;
+    };
+
+    document.title = activePost.metaTitle;
+
+    const descriptionMeta = ensureMeta('meta[name="description"]', "name", "description");
+    const ogTitleMeta = ensureMeta('meta[property="og:title"]', "property", "og:title");
+    const ogDescriptionMeta = ensureMeta('meta[property="og:description"]', "property", "og:description");
+    const twitterTitleMeta = ensureMeta('meta[name="twitter:title"]', "name", "twitter:title");
+    const twitterDescriptionMeta = ensureMeta('meta[name="twitter:description"]', "name", "twitter:description");
+
+    const previousDescription = descriptionMeta.getAttribute("content") || "";
+    const previousOgTitle = ogTitleMeta.getAttribute("content") || "";
+    const previousOgDescription = ogDescriptionMeta.getAttribute("content") || "";
+    const previousTwitterTitle = twitterTitleMeta.getAttribute("content") || "";
+    const previousTwitterDescription = twitterDescriptionMeta.getAttribute("content") || "";
+
+    descriptionMeta.setAttribute("content", activePost.metaDescription);
+    ogTitleMeta.setAttribute("content", activePost.metaTitle);
+    ogDescriptionMeta.setAttribute("content", activePost.metaDescription);
+    twitterTitleMeta.setAttribute("content", activePost.metaTitle);
+    twitterDescriptionMeta.setAttribute("content", activePost.metaDescription);
+
+    return () => {
+      document.title = previousTitle;
+      descriptionMeta.setAttribute("content", previousDescription);
+      ogTitleMeta.setAttribute("content", previousOgTitle);
+      ogDescriptionMeta.setAttribute("content", previousOgDescription);
+      twitterTitleMeta.setAttribute("content", previousTwitterTitle);
+      twitterDescriptionMeta.setAttribute("content", previousTwitterDescription);
+    };
+  }, [activePost]);
 
   const shareToFacebook = () => {
     const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(postUrl)}`;
@@ -336,6 +381,26 @@ function BlogPage({ onGoHome, activePostSlug, onSelectPost }) {
                 <span>{`?page=blog&post=${activePost.slug}`}</span>
               </div>
               <div dangerouslySetInnerHTML={{ __html: activePost.content }} />
+              <section className="related-posts">
+                <h3>Bài liên quan</h3>
+                <div className="related-posts-grid">
+                  {relatedPosts.map((post) => (
+                    <button
+                      key={post.slug}
+                      type="button"
+                      className="related-post-card"
+                      onClick={() => onSelectPost(post.slug)}
+                    >
+                      <img src={post.image} alt={post.title} loading="lazy" />
+                      <div>
+                        <span>{post.date}</span>
+                        <strong>{post.title}</strong>
+                        <p>{post.excerpt}</p>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </section>
             </div>
           </article>
         </div>
@@ -395,14 +460,30 @@ export default function App() {
   const [headerVisible, setHeaderVisible] = useState(true);
   const [pendingHash, setPendingHash] = useState("");
   const [activeSection, setActiveSection] = useState("hero");
+  const [featuredMealId, setFeaturedMealId] = useState("");
   const nextSelectedDay = selectedDay === 30 ? 1 : selectedDay + 1;
 
   const featuredMeals = useMemo(() => {
     return plan.slice(0, 4).map((entry, idx) => {
       const meal = idx % 2 === 0 ? entry.lunch : entry.dinner;
-      return { id: meal.id, name: meal.name, image: meal.image };
+      return {
+        id: meal.id,
+        name: meal.name,
+        image: meal.image,
+        note: meal.note,
+        tags: meal.tags,
+        ingredients: meal.ingredients,
+        steps: meal.steps,
+        session: idx % 2 === 0 ? "lunch" : "dinner",
+        sessionLabel: idx % 2 === 0 ? "Bữa trưa" : "Bữa tối",
+      };
     });
   }, [plan]);
+
+  const featuredMeal =
+    featuredMeals.find((item) => item.id === featuredMealId) ||
+    featuredMeals[0] ||
+    null;
 
   const scrollToDay = (day) => {
     const el = document.getElementById(`day-${day}`);
@@ -439,6 +520,24 @@ export default function App() {
 
   const regeneratePlan = () => {
     setPlan(generateMonthPlan());
+  };
+
+  const replaceTodayMealWithFeatured = (featuredItem) => {
+    if (!featuredItem) return;
+    setPlan((prev) =>
+      prev.map((entry) => {
+        if (entry.day !== today) return entry;
+        return {
+          ...entry,
+          [featuredItem.session]:
+            entry[featuredItem.session].id === featuredItem.id
+              ? getRandomMeal(featuredItem.session, featuredItem.id)
+              : featuredItem,
+        };
+      })
+    );
+    setSelectedDay(today);
+    window.requestAnimationFrame(() => scrollToDay(today));
   };
 
   const closeMobileMenu = () => {
@@ -532,6 +631,13 @@ export default function App() {
       setActivePostSlug(POSTS[0]?.slug || "");
     }
   }, [currentPage, activePostSlug]);
+
+  useEffect(() => {
+    if (!featuredMeals.length) return;
+    if (!featuredMeals.some((item) => item.id === featuredMealId)) {
+      setFeaturedMealId(featuredMeals[0].id);
+    }
+  }, [featuredMeals, featuredMealId]);
 
   useEffect(() => {
     let lastScrollY = window.scrollY;
@@ -768,11 +874,64 @@ export default function App() {
           <div className="featured-track">
             {featuredMeals.map((item) => (
               <article key={item.id}>
-                <img src={item.image} alt={item.name} loading="lazy" />
+                <div className="featured-image-wrap">
+                  <img src={item.image} alt={item.name} loading="lazy" />
+                  <span className={`featured-badge ${item.session === "lunch" ? "lunch" : "dinner"}`}>
+                    {item.session === "lunch" ? "Gợi ý bữa trưa" : "Gợi ý bữa tối"}
+                  </span>
+                </div>
                 <strong>{item.name}</strong>
+                <div className="featured-actions">
+                  <button type="button" onClick={() => setFeaturedMealId(item.id)}>
+                    Xem chi tiết
+                  </button>
+                  <button type="button" onClick={() => replaceTodayMealWithFeatured(item)}>
+                    Thay món hôm nay
+                  </button>
+                </div>
               </article>
             ))}
           </div>
+          {featuredMeal && (
+            <div className="featured-detail">
+              <div>
+                <div className="featured-detail-header">
+                  <p className="featured-detail-label">{featuredMeal.sessionLabel} gợi ý</p>
+                  <span className={`featured-badge ${featuredMeal.session === "lunch" ? "lunch" : "dinner"}`}>
+                    {featuredMeal.session === "lunch" ? "Gợi ý bữa trưa" : "Gợi ý bữa tối"}
+                  </span>
+                </div>
+                <h3>{featuredMeal.name}</h3>
+                <p>{featuredMeal.note}</p>
+                <div className="meal-tags">
+                  {featuredMeal.tags.slice(0, 3).map((tag) => (
+                    <span key={`${featuredMeal.id}-${tag}`}>{tag}</span>
+                  ))}
+                </div>
+              </div>
+              <div className="featured-detail-content">
+                <div>
+                  <h4>Nguyên liệu chính</h4>
+                  <ul>
+                    {featuredMeal.ingredients.slice(0, 5).map((item) => (
+                      <li key={`${featuredMeal.id}-${item.name}`}>
+                        {item.name}: {item.per1}
+                        {item.unit}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <h4>Cách làm nhanh</h4>
+                  <ol>
+                    {featuredMeal.steps.slice(0, 3).map((step, index) => (
+                      <li key={`${featuredMeal.id}-featured-step-${index + 1}`}>{step}</li>
+                    ))}
+                  </ol>
+                </div>
+              </div>
+            </div>
+          )}
         </section>
 
         <TrackingSection />
