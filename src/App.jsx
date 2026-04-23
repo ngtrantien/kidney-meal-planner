@@ -461,6 +461,7 @@ export default function App() {
   const [pendingHash, setPendingHash] = useState("");
   const [activeSection, setActiveSection] = useState("hero");
   const [featuredMealId, setFeaturedMealId] = useState("");
+  const [isFeaturedModalOpen, setIsFeaturedModalOpen] = useState(false);
   const nextSelectedDay = selectedDay === 30 ? 1 : selectedDay + 1;
 
   const featuredMeals = useMemo(() => {
@@ -537,7 +538,18 @@ export default function App() {
       })
     );
     setSelectedDay(today);
+    setIsFeaturedModalOpen(false);
     window.requestAnimationFrame(() => scrollToDay(today));
+  };
+
+  const openFeaturedModal = (featuredItem) => {
+    if (!featuredItem) return;
+    setFeaturedMealId(featuredItem.id);
+    setIsFeaturedModalOpen(true);
+  };
+
+  const closeFeaturedModal = () => {
+    setIsFeaturedModalOpen(false);
   };
 
   const closeMobileMenu = () => {
@@ -638,6 +650,25 @@ export default function App() {
       setFeaturedMealId(featuredMeals[0].id);
     }
   }, [featuredMeals, featuredMealId]);
+
+  useEffect(() => {
+    if (!isFeaturedModalOpen) return undefined;
+
+    const onKeyDown = (event) => {
+      if (event.key === "Escape") {
+        closeFeaturedModal();
+      }
+    };
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", onKeyDown);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [isFeaturedModalOpen]);
 
   useEffect(() => {
     let lastScrollY = window.scrollY;
@@ -882,7 +913,7 @@ export default function App() {
                 </div>
                 <strong>{item.name}</strong>
                 <div className="featured-actions">
-                  <button type="button" onClick={() => setFeaturedMealId(item.id)}>
+                  <button type="button" onClick={() => openFeaturedModal(item)}>
                     Xem chi tiết
                   </button>
                   <button type="button" onClick={() => replaceTodayMealWithFeatured(item)}>
@@ -892,46 +923,6 @@ export default function App() {
               </article>
             ))}
           </div>
-          {featuredMeal && (
-            <div className="featured-detail">
-              <div>
-                <div className="featured-detail-header">
-                  <p className="featured-detail-label">{featuredMeal.sessionLabel} gợi ý</p>
-                  <span className={`featured-badge ${featuredMeal.session === "lunch" ? "lunch" : "dinner"}`}>
-                    {featuredMeal.session === "lunch" ? "Gợi ý bữa trưa" : "Gợi ý bữa tối"}
-                  </span>
-                </div>
-                <h3>{featuredMeal.name}</h3>
-                <p>{featuredMeal.note}</p>
-                <div className="meal-tags">
-                  {featuredMeal.tags.slice(0, 3).map((tag) => (
-                    <span key={`${featuredMeal.id}-${tag}`}>{tag}</span>
-                  ))}
-                </div>
-              </div>
-              <div className="featured-detail-content">
-                <div>
-                  <h4>Nguyên liệu chính</h4>
-                  <ul>
-                    {featuredMeal.ingredients.slice(0, 5).map((item) => (
-                      <li key={`${featuredMeal.id}-${item.name}`}>
-                        {item.name}: {item.per1}
-                        {item.unit}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                <div>
-                  <h4>Cách làm nhanh</h4>
-                  <ol>
-                    {featuredMeal.steps.slice(0, 3).map((step, index) => (
-                      <li key={`${featuredMeal.id}-featured-step-${index + 1}`}>{step}</li>
-                    ))}
-                  </ol>
-                </div>
-              </div>
-            </div>
-          )}
         </section>
 
         <TrackingSection />
@@ -948,6 +939,61 @@ export default function App() {
           <button onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>Lên đầu trang</button>
         </div>
       </footer>
+
+      {isFeaturedModalOpen && featuredMeal && (
+        <div className="featured-modal-backdrop" onClick={closeFeaturedModal} role="presentation">
+          <div className="featured-modal" onClick={(event) => event.stopPropagation()} role="dialog" aria-modal="true">
+            <button type="button" className="featured-modal-close" onClick={closeFeaturedModal} aria-label="Đóng chi tiết món">
+              ×
+            </button>
+            <div className="featured-modal-image-wrap">
+              <img src={featuredMeal.image} alt={featuredMeal.name} loading="lazy" />
+              <span className={`featured-badge ${featuredMeal.session === "lunch" ? "lunch" : "dinner"}`}>
+                {featuredMeal.session === "lunch" ? "Gợi ý bữa trưa" : "Gợi ý bữa tối"}
+              </span>
+            </div>
+            <div className="featured-modal-body">
+              <p className="featured-detail-label">{featuredMeal.sessionLabel} gợi ý</p>
+              <h3>{featuredMeal.name}</h3>
+              <p className="featured-modal-note">{featuredMeal.note}</p>
+              <div className="meal-tags">
+                {featuredMeal.tags.slice(0, 3).map((tag) => (
+                  <span key={`${featuredMeal.id}-${tag}`}>{tag}</span>
+                ))}
+              </div>
+              <div className="featured-detail-content">
+                <div>
+                  <h4>Nguyên liệu chính</h4>
+                  <ul>
+                    {featuredMeal.ingredients.slice(0, 6).map((item) => (
+                      <li key={`${featuredMeal.id}-modal-${item.name}`}>
+                        {item.name}: {item.per1}
+                        {item.unit}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <h4>Cách làm nhanh</h4>
+                  <ol>
+                    {featuredMeal.steps.slice(0, 4).map((step, index) => (
+                      <li key={`${featuredMeal.id}-modal-step-${index + 1}`}>{step}</li>
+                    ))}
+                  </ol>
+                </div>
+              </div>
+              <div className="featured-modal-actions">
+                <button type="button" className="primary-link action-button" onClick={() => replaceTodayMealWithFeatured(featuredMeal)}>
+                  Thay món hôm nay
+                </button>
+                <button type="button" className="secondary-link action-button" onClick={closeFeaturedModal}>
+                  Đóng
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
