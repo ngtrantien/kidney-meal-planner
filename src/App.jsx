@@ -671,30 +671,24 @@ export default function App() {
   }, [isFeaturedModalOpen]);
 
   useEffect(() => {
-    let lastScrollY = window.scrollY;
+    let previousScrollPos = window.pageYOffset;
 
     const onScroll = () => {
-      const currentScrollY = window.scrollY;
+      const currentScrollPos = window.pageYOffset;
 
       if (mobileMenuOpen) {
         setHeaderVisible(true);
-        lastScrollY = currentScrollY;
+        previousScrollPos = currentScrollPos;
         return;
       }
 
-      if (currentScrollY < 40) {
+      if (previousScrollPos > currentScrollPos || currentScrollPos < 40) {
         setHeaderVisible(true);
-        lastScrollY = currentScrollY;
-        return;
+      } else {
+        setHeaderVisible(false);
       }
 
-      const movingDown = currentScrollY > lastScrollY + 8;
-      const movingUp = currentScrollY < lastScrollY - 8;
-
-      if (movingDown) setHeaderVisible(false);
-      if (movingUp) setHeaderVisible(true);
-
-      lastScrollY = currentScrollY;
+      previousScrollPos = currentScrollPos;
     };
 
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -704,7 +698,7 @@ export default function App() {
   const displayedPlans = [getDayPlan(selectedDay), getDayPlan(nextSelectedDay)].filter(Boolean);
 
   return (
-    <div className="site-shell">
+    <>
       <header className={`top-header ${headerVisible ? "is-visible" : "is-hidden"}`}>
         <div className="topline">
           <span>Kidney Care</span>
@@ -751,7 +745,8 @@ export default function App() {
         </div>
       </header>
 
-      {currentPage === "blog" ? (
+      <div className="site-shell">
+        {currentPage === "blog" ? (
         <BlogPage
           activePostSlug={activePostSlug}
           onGoHome={() => navigateTo({ page: "home" })}
@@ -939,6 +934,7 @@ export default function App() {
           <button onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>Lên đầu trang</button>
         </div>
       </footer>
+      </div>
 
       {isFeaturedModalOpen && featuredMeal && (
         <div className="featured-modal-backdrop" onClick={closeFeaturedModal} role="presentation">
@@ -994,6 +990,6 @@ export default function App() {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 }
