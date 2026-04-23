@@ -2,7 +2,7 @@ import "./mealImages";
 
 const blogImage = `${process.env.PUBLIC_URL}/images/blog/placeholder.svg`;
 
-export const POSTS = [
+const RAW_POSTS = [
   {
     slug: "che-do-an-it-kali",
     title: "Chế độ ăn ít kali cho người bệnh thận",
@@ -37,3 +37,28 @@ export const POSTS = [
     `
   }
 ];
+
+function repairMojibake(value) {
+  if (typeof value !== "string") return value;
+  if (!/[ÃÂÆÄÅÐÑÒÓÔÕÖØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿâ]/.test(value)) {
+    return value;
+  }
+
+  try {
+    const bytes = Uint8Array.from(Array.from(value, (ch) => ch.charCodeAt(0) & 0xff));
+    return new TextDecoder("utf-8").decode(bytes);
+  } catch {
+    return value;
+  }
+}
+
+function normalizePost(post) {
+  return {
+    ...post,
+    title: repairMojibake(post.title),
+    excerpt: repairMojibake(post.excerpt),
+    content: repairMojibake(post.content),
+  };
+}
+
+export const POSTS = RAW_POSTS.map(normalizePost);

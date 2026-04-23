@@ -3,7 +3,7 @@
 // Tiêu chí: ít kali, ít phốt-pho, ít natri, đạm vừa phải
 // ============================================================
 
-export const MEALS = [
+const RAW_MEALS = [
   // ─── BỮA TRƯA ───────────────────────────────────────────
   {
     id: "lunch_01",
@@ -669,6 +669,37 @@ export const MEALS = [
     ]
   }
 ];
+
+function repairMojibake(value) {
+  if (typeof value !== "string") return value;
+  if (!/[ÃÂÆÄÅÐÑÒÓÔÕÖØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿâ]/.test(value)) {
+    return value;
+  }
+
+  try {
+    const bytes = Uint8Array.from(Array.from(value, (ch) => ch.charCodeAt(0) & 0xff));
+    return new TextDecoder("utf-8").decode(bytes);
+  } catch {
+    return value;
+  }
+}
+
+function normalizeMeal(meal) {
+  return {
+    ...meal,
+    name: repairMojibake(meal.name),
+    tags: meal.tags.map(repairMojibake),
+    note: repairMojibake(meal.note),
+    ingredients: meal.ingredients.map((ing) => ({
+      ...ing,
+      name: repairMojibake(ing.name),
+      unit: repairMojibake(ing.unit),
+    })),
+    steps: meal.steps.map(repairMojibake),
+  };
+}
+
+export const MEALS = RAW_MEALS.map(normalizeMeal);
 
 // Tạo thực đơn 30 ngày từ danh sách món
 export function generateMonthPlan() {

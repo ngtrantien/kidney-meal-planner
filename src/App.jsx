@@ -4,67 +4,67 @@ import { POSTS } from "./data/posts";
 import "./App.css";
 
 const quickMenus = [
-  "Huong dan mon an than",
-  "Thong so dinh duong",
-  "Q&A voi bac si",
-  "Lich tai kham",
-  "Kho cong thuc",
-  "Thuc don theo tuan",
-  "Muc tieu uong nuoc",
+  "Hướng dẫn món ăn thận",
+  "Thông số dinh dưỡng",
+  "Q&A với bác sĩ",
+  "Lịch tái khám",
+  "Kho công thức",
+  "Thực đơn theo tuần",
+  "Mục tiêu uống nước",
 ];
 
-const noticeTabs = ["Thong bao", "Loi nhac", "Kien thuc than"];
+const noticeTabs = ["Thông báo", "Lời nhắc", "Kiến thức thận"];
 
 const noticeByTab = {
-  "Thong bao": [
+  "Thông báo": [
     {
       date: "08.15",
-      title: "Cap nhat thuc don than thang nay",
-      text: "Bo sung cac mon it natri va can doi dam cho benh than man.",
+      title: "Cập nhật thực đơn thận tháng này",
+      text: "Bổ sung các món ít natri và cân đối đạm cho bệnh thận mạn.",
     },
     {
       date: "08.10",
-      title: "Lich tu van dinh duong online",
-      text: "Mo khung 19:30 thu 3 va thu 6, dang ky ngay tren he thong.",
+      title: "Lịch tư vấn dinh dưỡng online",
+      text: "Mở khung 19:30 thứ 3 và thứ 6, đăng ký ngay trên hệ thống.",
     },
     {
       date: "08.08",
-      title: "Mau nhat ky an uong moi",
-      text: "Ban in 1 trang de theo doi muoi, kali, phospho moi ngay.",
+      title: "Mẫu nhật ký ăn uống mới",
+      text: "Bản in 1 trang để theo dõi muối, kali, phospho mỗi ngày.",
     },
   ],
-  "Loi nhac": [
+  "Lời nhắc": [
     {
-      date: "Moi ngay",
-      title: "Uong nuoc theo huong dan ca nhan",
-      text: "Khong tang giam luong nuoc neu chua co tu van tu bac si dieu tri.",
+      date: "Mỗi ngày",
+      title: "Uống nước theo hướng dẫn cá nhân",
+      text: "Không tăng giảm lượng nước nếu chưa có tư vấn từ bác sĩ điều trị.",
     },
     {
-      date: "Moi bua",
-      title: "Niem nhat, uu tien luoc hap",
-      text: "Giam nuoc mam, hat nem, do dong hop va thuc pham che bien san.",
+      date: "Mỗi bữa",
+      title: "Nêm nhạt, ưu tiên luộc hấp",
+      text: "Giảm nước mắm, hạt nêm, đồ đóng hộp và thực phẩm chế biến sẵn.",
     },
     {
-      date: "Hang tuan",
-      title: "Theo doi can nang va huyet ap",
-      text: "Ghi lai thay doi bat thuong de trao doi trong lan tai kham.",
+      date: "Hàng tuần",
+      title: "Theo dõi cân nặng và huyết áp",
+      text: "Ghi lại thay đổi bất thường để trao đổi trong lần tái khám.",
     },
   ],
-  "Kien thuc than": [
+  "Kiến thức thận": [
     {
-      date: "Kien thuc",
-      title: "Vì sao can giam natri?",
-      text: "Giam muoi giup han che phu va giam ganh nang cho than va tim mach.",
+      date: "Kiến thức",
+      title: "Vì sao cần giảm natri?",
+      text: "Giảm muối giúp hạn chế phù và giảm gánh nặng cho thận và tim mạch.",
     },
     {
-      date: "Kien thuc",
-      title: "Kiem soat kali nhu the nao?",
-      text: "Uu tien rau cu it kali, can doi khau phan theo ket qua xet nghiem.",
+      date: "Kiến thức",
+      title: "Kiểm soát kali như thế nào?",
+      text: "Ưu tiên rau củ ít kali, cân đối khẩu phần theo kết quả xét nghiệm.",
     },
     {
-      date: "Kien thuc",
-      title: "Dam vua phai trong CKD",
-      text: "Bo tri dam theo huong dan dieu tri de tranh tang ure mau.",
+      date: "Kiến thức",
+      title: "Đạm vừa phải trong CKD",
+      text: "Bố trí đạm theo hướng dẫn điều trị để tránh tăng ure máu.",
     },
   ],
 };
@@ -111,7 +111,7 @@ function MealCard({ label, meal, servings, onRandomize }) {
     <article className="meal-card">
       <div className="meal-image-wrap">
         <img src={meal.image} alt={meal.name} loading="lazy" />
-        <span className={`meal-badge ${label === "Lunch" ? "lunch" : "dinner"}`}>{label}</span>
+        <span className={`meal-badge ${label === "Bữa trưa" ? "lunch" : "dinner"}`}>{label}</span>
       </div>
       <div className="meal-body">
         <h5>{meal.name}</h5>
@@ -126,7 +126,7 @@ function MealCard({ label, meal, servings, onRandomize }) {
             <li key={`${meal.id}-${line}`}>{line}</li>
           ))}
         </ul>
-        <h6>Cach che bien nhanh</h6>
+        <h6>Cách chế biến nhanh</h6>
         <ol className="meal-steps">
           {quickSteps.map((step, index) => (
             <li key={`${meal.id}-step-${index + 1}`}>{step}</li>
@@ -134,7 +134,7 @@ function MealCard({ label, meal, servings, onRandomize }) {
         </ol>
         <button onClick={onRandomize}>
           <IconRefresh />
-          Doi mon nay
+          Đổi món này
         </button>
       </div>
     </article>
@@ -145,18 +145,18 @@ function DayPlan({ dayPlan, servings, onRandomize, isToday }) {
   return (
     <section className={`day-plan ${isToday ? "is-today" : ""}`} id={`day-${dayPlan.day}`}>
       <header>
-        <h4>Ngay {dayPlan.day}</h4>
-        {isToday && <span>Hom nay</span>}
+        <h4>Ngày {dayPlan.day}</h4>
+        {isToday && <span>Hôm nay</span>}
       </header>
       <div className="day-plan-grid">
         <MealCard
-          label="Lunch"
+          label="Bữa trưa"
           meal={dayPlan.lunch}
           servings={servings}
           onRandomize={() => onRandomize(dayPlan.day, "lunch")}
         />
         <MealCard
-          label="Dinner"
+          label="Bữa tối"
           meal={dayPlan.dinner}
           servings={servings}
           onRandomize={() => onRandomize(dayPlan.day, "dinner")}
@@ -212,14 +212,14 @@ export default function App() {
         </div>
         <div className="head-main">
           <div className="brand">
-            <p>ThanKhoe</p>
+            <p>Thận Khỏe</p>
             <strong>Kidney Meal Planner Center</strong>
           </div>
           <nav>
-            <a href="#hero">Tong quan</a>
-            <a href="#notice">Thong tin</a>
-            <a href="#featured">Mon goi y</a>
-            <a href="#planner">Thuc don 30 ngay</a>
+            <a href="#hero">Tổng quan</a>
+            <a href="#notice">Thông tin</a>
+            <a href="#featured">Món gợi ý</a>
+            <a href="#planner">Thực đơn 30 ngày</a>
           </nav>
           <div className="head-actions">
             <button aria-label="Search">
@@ -235,15 +235,15 @@ export default function App() {
       <main className="content-wrap">
         <section className="hero" id="hero">
           <div className="hero-copy">
-            <p className="hero-eyebrow">Thuc don cho nguoi benh than</p>
+            <p className="hero-eyebrow">Thực đơn cho người bệnh thận</p>
             <h1>
-              Layout moi giong mau
+              Layout mới giống mẫu
               <br />
-              <span>nhung van dung cho thuc don than</span>
+              <span>nhưng vẫn dùng cho thực đơn thận</span>
             </h1>
             <p>
-              Ke hoach 30 ngay gom bua trua va bua toi. Moi mon duoc uu tien it natri, kiem soat
-              kali va phospho, dam o muc vua phai.
+              Kế hoạch 30 ngày gồm bữa trưa và bữa tối. Mỗi món được ưu tiên ít natri, kiểm soát
+              kali và phospho, đạm ở mức vừa phải.
             </p>
             <div className="quick-grid">
               {quickMenus.map((item) => (
@@ -261,7 +261,7 @@ export default function App() {
 
         <section className="notice" id="notice">
           <div className="section-title-row">
-            <h2>Ban tin dinh duong than</h2>
+            <h2>Bản tin dinh dưỡng thận</h2>
             <div className="tabs">
               {noticeTabs.map((tab) => (
                 <button
@@ -285,17 +285,17 @@ export default function App() {
               ))}
             </div>
             <aside className="focus-card">
-              <p>Chu de trong tam</p>
-              <h3>Giam muoi thong minh trong bua an hang ngay</h3>
-              <button>Doc huong dan</button>
+              <p>Chủ đề trọng tâm</p>
+              <h3>Giảm muối thông minh trong bữa ăn hằng ngày</h3>
+              <button>Đọc hướng dẫn</button>
             </aside>
           </div>
         </section>
 
         <section className="featured" id="featured">
           <div className="section-title-row">
-            <h2>Mon goi y trong thang</h2>
-            <p>Lua chon tu chinh thuc don than dang duoc tao.</p>
+            <h2>Món gợi ý trong tháng</h2>
+            <p>Lựa chọn từ chính thực đơn thận đang được tạo.</p>
           </div>
           <div className="featured-track">
             {featuredMeals.map((item) => (
@@ -308,19 +308,19 @@ export default function App() {
         </section>
 
         <section className="education">
-          <h2>Thong tin giao duc benh than</h2>
+          <h2>Thông tin giáo dục bệnh thận</h2>
           <div className="education-grid">
             <article className="education-card">
-              <h3>Lich theo doi suc khoe</h3>
+              <h3>Lịch theo dõi sức khỏe</h3>
               <ul>
-                <li>Can nang: ghi vao buoi sang sau khi di tieu</li>
-                <li>Huyet ap: do 2 lan/ngay, ghi theo gio co dinh</li>
-                <li>Nuoc tieu: theo doi mau sac va luong</li>
-                <li>Tu van: mang nhat ky an uong khi tai kham</li>
+                <li>Cân nặng: ghi vào buổi sáng sau khi đi tiểu</li>
+                <li>Huyết áp: đo 2 lần/ngày, ghi theo giờ cố định</li>
+                <li>Nước tiểu: theo dõi màu sắc và lượng</li>
+                <li>Tư vấn: mang nhật ký ăn uống khi tái khám</li>
               </ul>
             </article>
             <article className="education-card">
-              <h3>Bai viet huu ich</h3>
+              <h3>Bài viết hữu ích</h3>
               <ul>
                 {POSTS.map((post) => (
                   <li key={post.slug}>
@@ -336,19 +336,19 @@ export default function App() {
         <section className="planner" id="planner">
           <div className="planner-head">
             <div>
-              <h2>Thuc don than 30 ngay</h2>
-              <p>Chon ngay de nhay nhanh, doi mon theo bua va dieu chinh so khau phan.</p>
+              <h2>Thực đơn thận 30 ngày</h2>
+              <p>Chọn ngày để nhảy nhanh, đổi món theo bữa và điều chỉnh số khẩu phần.</p>
             </div>
             <div className="planner-controls">
               <div className="servings">
-                <span>Khau phan</span>
+                <span>Khẩu phần</span>
                 <button onClick={() => setServings((v) => Math.max(1, v - 1))}>-</button>
                 <strong>{servings}</strong>
                 <button onClick={() => setServings((v) => Math.min(8, v + 1))}>+</button>
               </div>
               <button className="regen-btn" onClick={regeneratePlan}>
                 <IconRefresh />
-                Tao lai thuc don
+                Tạo lại thực đơn
               </button>
             </div>
           </div>
@@ -382,11 +382,11 @@ export default function App() {
       <footer className="footer">
         <div>
           <strong>Kidney Meal Planner Center</strong>
-          <p>Ho tro xay dung bua an phu hop cho benh than man tinh.</p>
+          <p>Hỗ trợ xây dựng bữa ăn phù hợp cho bệnh thận mạn tính.</p>
         </div>
         <div className="footer-actions">
-          <button onClick={() => scrollToDay(today)}>Den ngay hom nay</button>
-          <button onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>Len dau trang</button>
+          <button onClick={() => scrollToDay(today)}>Đến ngày hôm nay</button>
+          <button onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>Lên đầu trang</button>
         </div>
       </footer>
     </div>
