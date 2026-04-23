@@ -3,6 +3,30 @@ import { generateMonthPlan, getRandomMeal } from "./data/meals";
 import { POSTS } from "./data/posts";
 import "./App.css";
 
+const repairVietnameseText = (value) => {
+  if (typeof value !== "string" || !/[ÃÂÆÄá»áº]/.test(value)) return value;
+
+  try {
+    return decodeURIComponent(escape(value));
+  } catch {
+    return value;
+  }
+};
+
+const repairUiData = (value) => {
+  if (Array.isArray(value)) {
+    return value.map((item) => repairUiData(item));
+  }
+
+  if (value && typeof value === "object") {
+    return Object.fromEntries(
+      Object.entries(value).map(([key, nestedValue]) => [repairVietnameseText(key), repairUiData(nestedValue)])
+    );
+  }
+
+  return repairVietnameseText(value);
+};
+
 const quickMenus = [
   { label: "Nguyên tắc", href: "#notice", page: "home" },
   { label: "Hướng dẫn sử dụng", href: "#guide", page: "home" },
@@ -74,6 +98,11 @@ const noticeByTab = {
     },
   ],
 };
+
+const uiQuickMenus = repairUiData(quickMenus);
+const uiNavLinks = repairUiData(navLinks);
+const uiNoticeTabs = repairUiData(noticeTabs);
+const uiNoticeByTab = repairUiData(noticeByTab);
 
 function IconRefresh() {
   return (
@@ -452,7 +481,7 @@ export default function App() {
   const today = Math.min(new Date().getDate(), 30);
   const [plan, setPlan] = useState(() => generateMonthPlan());
   const [servings, setServings] = useState(2);
-  const [activeTab, setActiveTab] = useState(noticeTabs[0]);
+  const [activeTab, setActiveTab] = useState(uiNoticeTabs[0]);
   const [selectedDay, setSelectedDay] = useState(today);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(initialRoute.page);
@@ -462,6 +491,7 @@ export default function App() {
   const [activeSection, setActiveSection] = useState("hero");
   const [featuredMealId, setFeaturedMealId] = useState("");
   const [isFeaturedModalOpen, setIsFeaturedModalOpen] = useState(false);
+  const [isFeaturedModalClosing, setIsFeaturedModalClosing] = useState(false);
   const nextSelectedDay = selectedDay === 30 ? 1 : selectedDay + 1;
 
   const featuredMeals = useMemo(() => {
@@ -538,6 +568,7 @@ export default function App() {
       })
     );
     setSelectedDay(today);
+    setIsFeaturedModalClosing(false);
     setIsFeaturedModalOpen(false);
     window.requestAnimationFrame(() => scrollToDay(today));
   };
@@ -545,11 +576,13 @@ export default function App() {
   const openFeaturedModal = (featuredItem) => {
     if (!featuredItem) return;
     setFeaturedMealId(featuredItem.id);
+    setIsFeaturedModalClosing(false);
     setIsFeaturedModalOpen(true);
   };
 
   const closeFeaturedModal = () => {
-    setIsFeaturedModalOpen(false);
+    if (!isFeaturedModalOpen || isFeaturedModalClosing) return;
+    setIsFeaturedModalClosing(true);
   };
 
   const closeMobileMenu = () => {
@@ -652,7 +685,7 @@ export default function App() {
   }, [featuredMeals, featuredMealId]);
 
   useEffect(() => {
-    if (!isFeaturedModalOpen) return undefined;
+    if (!isFeaturedModalOpen && !isFeaturedModalClosing) return undefined;
 
     const onKeyDown = (event) => {
       if (event.key === "Escape") {
@@ -668,7 +701,18 @@ export default function App() {
       document.body.style.overflow = previousOverflow;
       window.removeEventListener("keydown", onKeyDown);
     };
-  }, [isFeaturedModalOpen]);
+  }, [isFeaturedModalOpen, isFeaturedModalClosing]);
+
+  useEffect(() => {
+    if (!isFeaturedModalClosing) return undefined;
+
+    const timer = window.setTimeout(() => {
+      setIsFeaturedModalClosing(false);
+      setIsFeaturedModalOpen(false);
+    }, 220);
+
+    return () => window.clearTimeout(timer);
+  }, [isFeaturedModalClosing]);
 
   useEffect(() => {
     let previousScrollPos = window.pageYOffset;
@@ -694,6 +738,33 @@ export default function App() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, [mobileMenuOpen]);
+
+  useEffect(() => {
+    const root = document.getElementById("root");
+    if (!root) return;
+
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    const textNodes = [];
+
+    while (walker.nextNode()) {
+      textNodes.push(walker.currentNode);
+    }
+
+    textNodes.forEach((node) => {
+      const nextValue = repairVietnameseText(node.nodeValue || "");
+      if (nextValue !== node.nodeValue) {
+        node.nodeValue = nextValue;
+      }
+    });
+
+    root.querySelectorAll("[aria-label]").forEach((element) => {
+      const currentLabel = element.getAttribute("aria-label");
+      const nextLabel = repairVietnameseText(currentLabel);
+      if (currentLabel && nextLabel !== currentLabel) {
+        element.setAttribute("aria-label", nextLabel);
+      }
+    });
+  }, [activeTab, activePostSlug, currentPage, isFeaturedModalClosing, isFeaturedModalOpen, mobileMenuOpen, plan, selectedDay, servings]);
 
   const displayedPlans = [getDayPlan(selectedDay), getDayPlan(nextSelectedDay)].filter(Boolean);
 
@@ -723,7 +794,7 @@ export default function App() {
             <span />
           </button>
           <nav id="main-navigation" className={`main-nav ${mobileMenuOpen ? "is-open" : ""}`}>
-            {navLinks.map((link) => (
+            {uiNavLinks.map((link) => (
               <a
                 key={`${link.label}-${link.page || "home"}`}
                 href={link.page === "blog" ? "?page=blog" : link.href}
@@ -771,7 +842,7 @@ export default function App() {
               <a className="secondary-link" href="#guide" onClick={(event) => handleNavClick(event, { page: "home", href: "#guide" })}>Cách sử dụng</a>
             </div>
             <div className="quick-grid">
-              {quickMenus.map((item) => (
+              {uiQuickMenus.map((item) => (
                 <a
                   key={item.label}
                   href={item.page === "blog" ? `?page=blog&post=${activePostSlug || POSTS[0]?.slug || ""}` : item.href}
@@ -861,7 +932,7 @@ export default function App() {
           <div className="section-title-row">
             <h2>Nguyên tắc ăn uống cho thận</h2>
             <div className="tabs">
-              {noticeTabs.map((tab) => (
+              {uiNoticeTabs.map((tab) => (
                 <button
                   key={tab}
                   className={tab === activeTab ? "active" : ""}
@@ -874,7 +945,7 @@ export default function App() {
           </div>
           <div className="notice-grid">
             <div className="notice-cards">
-              {noticeByTab[activeTab].map((item) => (
+              {uiNoticeByTab[activeTab].map((item) => (
                 <article key={`${activeTab}-${item.title}`} className="notice-card">
                   <time>{item.date}</time>
                   <h3>{item.title}</h3>
@@ -936,9 +1007,18 @@ export default function App() {
       </footer>
       </div>
 
-      {isFeaturedModalOpen && featuredMeal && (
-        <div className="featured-modal-backdrop" onClick={closeFeaturedModal} role="presentation">
-          <div className="featured-modal" onClick={(event) => event.stopPropagation()} role="dialog" aria-modal="true">
+      {(isFeaturedModalOpen || isFeaturedModalClosing) && featuredMeal && (
+        <div
+          className={`featured-modal-backdrop ${isFeaturedModalClosing ? "is-closing" : ""}`}
+          onClick={closeFeaturedModal}
+          role="presentation"
+        >
+          <div
+            className={`featured-modal ${isFeaturedModalClosing ? "is-closing" : ""}`}
+            onClick={(event) => event.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+          >
             <button type="button" className="featured-modal-close" onClick={closeFeaturedModal} aria-label="Đóng chi tiết món">
               ×
             </button>
