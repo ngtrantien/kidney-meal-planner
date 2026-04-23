@@ -1,0 +1,31 @@
+<svg width="1200" height="720" viewBox="0 0 1200 720" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="720" rx="36" fill="#F7F3EB"/>
+  <circle cx="170" cy="154" r="132" fill="#F0E1C6"/>
+  <circle cx="1030" cy="570" r="168" fill="#E6F0DA"/>
+  <rect x="90" y="98" width="434" height="524" rx="30" fill="#FFFDF7"/>
+  <rect x="122" y="138" width="180" height="28" rx="14" fill="#CB9A52"/>
+  <rect x="122" y="188" width="292" height="28" rx="14" fill="#5A3A1E"/>
+  <rect x="122" y="232" width="254" height="18" rx="9" fill="#A38E79"/>
+  <rect x="122" y="264" width="224" height="18" rx="9" fill="#CDB9A2"/>
+  <rect x="122" y="320" width="370" height="270" rx="26" fill="#FBF3E8"/>
+  <circle cx="218" cy="414" r="62" fill="#D98E47"/>
+  <circle cx="330" cy="414" r="62" fill="#B45F3C"/>
+  <circle cx="442" cy="414" r="62" fill="#E2B658"/>
+  <circle cx="218" cy="520" r="62" fill="#7AA45C"/>
+  <circle cx="330" cy="520" r="62" fill="#E5D7A0"/>
+  <circle cx="442" cy="520" r="62" fill="#C9573F"/>
+  <ellipse cx="814" cy="378" rx="238" ry="180" fill="#FFFDF7"/>
+  <ellipse cx="814" cy="378" rx="206" ry="148" fill="#FAF5EC"/>
+  <rect x="676" y="296" width="252" height="54" rx="27" fill="#EADAB6"/>
+  <rect x="698" y="314" width="208" height="18" rx="9" fill="#B88D50"/>
+  <rect x="726" y="382" width="58" height="178" rx="29" fill="#F5E7C1"/>
+  <rect x="812" y="366" width="58" height="194" rx="29" fill="#F5E7C1"/>
+  <rect x="898" y="402" width="58" height="158" rx="29" fill="#F5E7C1"/>
+  <rect x="742" y="410" width="26" height="106" rx="13" fill="#CE8550"/>
+  <rect x="828" y="396" width="26" height="118" rx="13" fill="#7AA45C"/>
+  <rect x="914" y="430" width="26" height="82" rx="13" fill="#D8B45A"/>
+  <circle cx="782" cy="282" r="28" fill="#FFFFFF"/>
+  <circle cx="782" cy="282" r="10" fill="#D9D9D9"/>
+  <path d="M982 286C996 266 1018 256 1042 258C1024 276 1016 292 1012 318C998 312 988 300 982 286Z" fill="#3F8F44"/>
+  <path d="M1046 314C1062 292 1088 282 1116 284C1094 306 1084 326 1080 352C1064 346 1054 332 1046 314Z" fill="#2F6F35"/>
+</svg>

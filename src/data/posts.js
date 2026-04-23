@@ -1,13 +1,17 @@
 import "./mealImages";
 
-const blogImage = `${process.env.PUBLIC_URL}/images/blog/placeholder.svg`;
+const BLOG_IMAGES = {
+  "che-do-an-it-kali": `${process.env.PUBLIC_URL}/images/blog/che-do-an-it-kali.svg`,
+  "giam-muoi-trong-bua-an": `${process.env.PUBLIC_URL}/images/blog/giam-muoi-trong-bua-an.svg`,
+  "lap-thuc-don-30-ngay": `${process.env.PUBLIC_URL}/images/blog/lap-thuc-don-30-ngay.svg`,
+};
 
 const RAW_POSTS = [
   {
     slug: "che-do-an-it-kali",
     title: "Chế độ ăn ít kali cho người bệnh thận",
     date: "23/04/2026",
-    image: blogImage,
+    image: BLOG_IMAGES["che-do-an-it-kali"],
     excerpt: "Các nguyên tắc đơn giản để chọn rau củ, trái cây và khẩu phần phù hợp hơn khi cần kiểm soát kali.",
     content: `
       <p>Người bệnh thận thường cần kiểm soát lượng kali tùy theo xét nghiệm máu và chỉ định của bác sĩ.</p>
@@ -18,7 +22,7 @@ const RAW_POSTS = [
     slug: "giam-muoi-trong-bua-an",
     title: "Giảm muối mà bữa ăn vẫn ngon",
     date: "23/04/2026",
-    image: blogImage,
+    image: BLOG_IMAGES["giam-muoi-trong-bua-an"],
     excerpt: "Một vài cách dùng gừng, hành, tỏi, chanh và rau thơm để món ăn đậm vị hơn mà không cần nhiều muối.",
     content: `
       <p>Giảm muối không có nghĩa là bữa ăn phải nhạt nhẽo. Có thể tăng hương thơm bằng gừng, hành, tỏi, tiêu nhẹ, chanh hoặc rau mùi.</p>
@@ -29,7 +33,7 @@ const RAW_POSTS = [
     slug: "lap-thuc-don-30-ngay",
     title: "Cách dùng thực đơn 30 ngày",
     date: "23/04/2026",
-    image: blogImage,
+    image: BLOG_IMAGES["lap-thuc-don-30-ngay"],
     excerpt: "Gợi ý cách xoay vòng món ăn, đổi món không hợp khẩu vị và điều chỉnh lượng nguyên liệu theo số người ăn.",
     content: `
       <p>Thực đơn 30 ngày nên được xem như khung tham khảo. Nếu một món không hợp khẩu vị, hãy dùng nút đổi món để chọn món cùng nhóm bữa.</p>

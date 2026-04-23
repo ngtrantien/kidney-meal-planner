@@ -246,6 +246,36 @@ function BlogSection() {
 
 function BlogPage({ onGoHome, activePostSlug, onSelectPost }) {
   const activePost = POSTS.find((post) => post.slug === activePostSlug) || POSTS[0];
+  const [copyLabel, setCopyLabel] = useState("Sao chép link bài viết");
+  const postUrl =
+    typeof window === "undefined"
+      ? `?page=blog&post=${activePost.slug}`
+      : `${window.location.origin}${window.location.pathname}?page=blog&post=${activePost.slug}`;
+
+  const copyPostLink = async () => {
+    try {
+      await navigator.clipboard.writeText(postUrl);
+      setCopyLabel("Đã sao chép link");
+      window.setTimeout(() => setCopyLabel("Sao chép link bài viết"), 1800);
+    } catch {
+      setCopyLabel("Không sao chép được");
+      window.setTimeout(() => setCopyLabel("Sao chép link bài viết"), 1800);
+    }
+  };
+
+  useEffect(() => {
+    setCopyLabel("Sao chép link bài viết");
+  }, [activePostSlug]);
+
+  const shareToFacebook = () => {
+    const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(postUrl)}`;
+    window.open(shareUrl, "_blank", "noopener,noreferrer,width=720,height=640");
+  };
+
+  const shareToZalo = () => {
+    const shareUrl = `https://zalo.me/share?url=${encodeURIComponent(postUrl)}`;
+    window.open(shareUrl, "_blank", "noopener,noreferrer,width=720,height=640");
+  };
 
   return (
     <main className="content-wrap blog-page">
@@ -294,6 +324,18 @@ function BlogPage({ onGoHome, activePostSlug, onSelectPost }) {
               <time>{activePost.date}</time>
               <h2>{activePost.title}</h2>
               <p className="blog-article-excerpt">{activePost.excerpt}</p>
+              <div className="blog-article-tools">
+                <button type="button" className="copy-link-btn" onClick={copyPostLink}>
+                  {copyLabel}
+                </button>
+                <button type="button" className="share-btn facebook" onClick={shareToFacebook}>
+                  Chia sẻ Facebook
+                </button>
+                <button type="button" className="share-btn zalo" onClick={shareToZalo}>
+                  Chia sẻ Zalo
+                </button>
+                <span>{`?page=blog&post=${activePost.slug}`}</span>
+              </div>
               <div dangerouslySetInnerHTML={{ __html: activePost.content }} />
             </div>
           </article>
