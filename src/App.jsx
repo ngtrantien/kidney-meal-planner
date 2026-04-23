@@ -4,8 +4,7 @@ import { POSTS } from "./data/posts";
 import "./App.css";
 
 const quickMenus = [
-  { label: "Xem thực đơn", href: "#planner", page: "home" },
-  { label: "Nguyên tắc ăn thận", href: "#notice", page: "home" },
+  { label: "Nguyên tắc", href: "#notice", page: "home" },
   { label: "Hướng dẫn sử dụng", href: "#guide", page: "home" },
   { label: "Blog dinh dưỡng", page: "blog" },
   { label: "Theo dõi tại nhà", href: "#tracking", page: "home" },
