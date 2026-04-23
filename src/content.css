@@ -3,7 +3,7 @@
   aspect-ratio: 16 / 9;
   overflow: hidden;
   border-bottom: 1px solid var(--line);
-  background: linear-gradient(135deg, #f5ead7 0%, #e7f4e9 100%);
+  background: linear-gradient(135deg, #f5ebe2 0%, #e8dcc8 100%);
 }
 
 .meal-image {
@@ -21,7 +21,7 @@
 .section-eyebrow {
   display: inline-block;
   margin-bottom: 6px;
-  color: var(--green);
+  color: var(--primary);
   font-size: 12px;
   font-weight: 800;
   letter-spacing: 0.08em;
@@ -30,7 +30,7 @@
 
 .section-heading h2 {
   font-family: 'Plus Jakarta Sans', sans-serif;
-  color: var(--green-strong);
+  color: var(--primary-dark);
   font-size: 28px;
   line-height: 1.1;
   letter-spacing: -0.04em;
@@ -62,7 +62,7 @@
   width: 100%;
   aspect-ratio: 16 / 10;
   object-fit: cover;
-  background: var(--green-pale);
+  background: var(--primary-pale);
 }
 
 .blog-card-body {
@@ -101,7 +101,7 @@
 
 .blog-card summary {
   cursor: pointer;
-  color: var(--green-strong);
+  color: var(--primary);
   font-size: 13px;
   font-weight: 800;
 }

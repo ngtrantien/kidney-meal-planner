@@ -1,25 +1,38 @@
-@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&family=Merriweather:wght@400;700&display=swap');
 
 :root {
-  --bg: #f4f6f1;
+  /* Modern warm palette inspired by design references */
+  --bg: #fef9f3;
+  --bg-accent: #fef5ed;
   --panel: #ffffff;
-  --panel-soft: #f8faf7;
-  --panel-green: #eef7f0;
-  --line: #dfe7dd;
-  --line-strong: #cfdacd;
-  --text: #314536;
-  --text-soft: #65766a;
-  --text-muted: #809182;
-  --green: #3b8252;
-  --green-strong: #2e6d43;
-  --green-soft: #dff0e3;
-  --green-pale: #f2faf4;
-  --amber: #c58b30;
-  --amber-soft: #fff3dc;
-  --amber-pale: #fff8ee;
-  --shadow-sm: 0 4px 14px rgba(38, 64, 41, 0.06);
-  --shadow-md: 0 10px 28px rgba(38, 64, 41, 0.09);
-  --radius-lg: 18px;
+  --panel-soft: #fffbf7;
+  --panel-warm: #fef7f1;
+  --line: #f0e8df;
+  --line-strong: #e8dcc8;
+  --text: #2c251f;
+  --text-soft: #6b5d52;
+  --text-muted: #8b7d72;
+  
+  /* Primary accent - warm brown/rust */
+  --primary: #c8845d;
+  --primary-dark: #a86c45;
+  --primary-light: #e8b8a0;
+  --primary-pale: #f5ebe2;
+  
+  /* Secondary - warm coral/peach */
+  --secondary: #d97757;
+  --secondary-pale: #faeae3;
+  
+  /* Accent - warm green for health/nutrition theme */
+  --accent: #8b9d7e;
+  --accent-pale: #f0f4ed;
+  
+  /* Shadows - warmer tone */
+  --shadow-sm: 0 4px 14px rgba(44, 37, 31, 0.08);
+  --shadow-md: 0 10px 28px rgba(44, 37, 31, 0.12);
+  --shadow-lg: 0 20px 40px rgba(44, 37, 31, 0.15);
+  
+  --radius-lg: 20px;
   --radius-md: 14px;
   --radius-sm: 10px;
 }
@@ -48,16 +61,16 @@ button, input, textarea, select { font: inherit; }
   top: 0;
   z-index: 40;
   padding-bottom: 10px;
-  background: linear-gradient(to bottom, rgba(244, 246, 241, 0.98), rgba(244, 246, 241, 0.92));
+  background: linear-gradient(to bottom, rgba(254, 249, 243, 0.98), rgba(254, 249, 243, 0.92));
   backdrop-filter: blur(10px);
 }
 
 .header-shell {
-  background: linear-gradient(180deg, var(--panel-soft) 0%, #f1f7f2 100%);
+  background: linear-gradient(180deg, var(--panel-soft) 0%, #fef7f1 100%);
   border: 1px solid var(--line);
   border-radius: 22px;
   box-shadow: var(--shadow-md);
-  padding: 14px;
+  padding: 16px;
 }
 
 .header-brand-row {
@@ -74,8 +87,8 @@ button, input, textarea, select { font: inherit; }
   display: grid;
   place-items: center;
   border-radius: 14px;
-  background: #dff0e3;
-  border: 1px solid #cfe2d3;
+  background: linear-gradient(135deg, #f5ebe2 0%, #e8dcc8 100%);
+  border: 1px solid var(--line-strong);
 }
 
 .logo-icon {
@@ -95,7 +108,7 @@ button, input, textarea, select { font: inherit; }
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #6b9b74;
+  color: var(--primary);
 }
 
 .app-title {
@@ -104,7 +117,10 @@ button, input, textarea, select { font: inherit; }
   line-height: 1.08;
   letter-spacing: -0.04em;
   font-weight: 800;
-  color: var(--green-strong);
+  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .app-sub {
@@ -177,7 +193,7 @@ button, input, textarea, select { font: inherit; }
   height: 38px;
   border: 0;
   background: transparent;
-  color: var(--green-strong);
+  color: var(--primary);
   font-size: 22px;
   font-weight: 700;
   cursor: pointer;
@@ -185,7 +201,7 @@ button, input, textarea, select { font: inherit; }
 }
 
 .count-btn:hover {
-  background: var(--green-pale);
+  background: var(--primary-pale);
 }
 
 .count-display {
@@ -206,15 +222,17 @@ button, input, textarea, select { font: inherit; }
 }
 
 .btn-primary {
-  border-color: var(--green);
-  background: var(--green);
+  border-color: var(--primary);
+  background: var(--primary);
   color: #fff;
   font-weight: 800;
 }
 
 .btn-primary:hover {
-  background: var(--green-strong);
-  border-color: var(--green-strong);
+  background: var(--primary-dark);
+  border-color: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 .compact-pill.action-pill {
@@ -223,9 +241,9 @@ button, input, textarea, select { font: inherit; }
 }
 
 .compact-pill.action-pill:hover {
-  background: var(--green-pale);
-  border-color: #cfe0d1;
-  color: var(--green-strong);
+  background: var(--primary-pale);
+  border-color: var(--line-strong);
+  color: var(--primary);
 }
 
 .health-banner {
@@ -235,15 +253,15 @@ button, input, textarea, select { font: inherit; }
   margin-top: 10px;
   padding: 12px 14px;
   border-radius: 14px;
-  background: var(--amber-soft);
-  border: 1px solid #f0e1bf;
-  color: #8c6a2f;
+  background: var(--secondary-pale);
+  border: 1px solid #f0ddd1;
+  color: #7a5643;
   font-size: 13px;
   line-height: 1.5;
 }
 
 .health-banner svg {
-  color: var(--amber);
+  color: var(--secondary);
   flex-shrink: 0;
   margin-top: 2px;
 }
@@ -275,15 +293,16 @@ button, input, textarea, select { font: inherit; }
 }
 
 .day-dot:hover {
-  border-color: #cfe0d1;
-  background: var(--green-pale);
-  color: var(--green-strong);
+  border-color: var(--line-strong);
+  background: var(--primary-pale);
+  color: var(--primary);
 }
 
 .day-dot.active {
-  background: var(--green);
-  border-color: var(--green);
+  background: var(--primary);
+  border-color: var(--primary);
   color: #fff;
+  box-shadow: 0 4px 12px rgba(200, 132, 93, 0.3);
 }
 
 .plan-container {
@@ -303,8 +322,8 @@ button, input, textarea, select { font: inherit; }
 }
 
 .day-row.today {
-  border-color: #b9d4c0;
-  box-shadow: 0 0 0 3px rgba(59, 130, 82, 0.10);
+  border-color: #e8b8a0;
+  box-shadow: 0 0 0 3px rgba(200, 132, 93, 0.10);
 }
 
 .day-label {
@@ -326,7 +345,7 @@ button, input, textarea, select { font: inherit; }
   font-size: 30px;
   line-height: 1;
   font-weight: 800;
-  color: var(--green-strong);
+  color: var(--primary);
 }
 
 .day-week {
@@ -340,7 +359,7 @@ button, input, textarea, select { font: inherit; }
 .today-badge {
   padding: 3px 8px;
   border-radius: 999px;
-  background: var(--green);
+  background: var(--primary);
   color: #fff;
   font-size: 10px;
   font-weight: 800;
@@ -383,14 +402,14 @@ button, input, textarea, select { font: inherit; }
 
 .meal-card.lunch .meal-session-badge {
   background: #fff2d9;
-  color: var(--amber);
+  color: var(--primary);
   border-bottom: 1px solid #f0dfbf;
 }
 
 .meal-card.dinner .meal-session-badge {
-  background: #e8f5eb;
-  color: var(--green);
-  border-bottom: 1px solid #d2e6d6;
+  background: var(--accent-pale);
+  color: var(--accent);
+  border-bottom: 1px solid #dfe8d8;
 }
 
 .meal-header {
@@ -435,15 +454,15 @@ button, input, textarea, select { font: inherit; }
   align-items: center;
   gap: 4px;
   border-radius: 999px;
-  border: 1px solid #dbe5d9;
+  border: 1px solid #d2dcc8;
   background: #fff;
-  color: #6b8170;
+  color: #6b7c6a;
   padding: 4px 9px;
   font-size: 12px;
   font-weight: 600;
 }
 
-.tag svg { color: var(--green); }
+.tag svg { color: var(--accent); }
 
 .meal-note {
   color: var(--text-muted);
@@ -482,7 +501,7 @@ button, input, textarea, select { font: inherit; }
 .serving-badge {
   padding: 2px 8px;
   border-radius: 999px;
-  background: var(--green);
+  background: var(--primary);
   color: #fff;
   font-size: 11px;
   font-weight: 800;
@@ -524,7 +543,7 @@ button, input, textarea, select { font: inherit; }
 .ingredient-table tr:last-child td { border-bottom: 0; }
 
 .ingredient-table td.amount {
-  color: var(--green-strong);
+  color: var(--primary);
   font-weight: 700;
   white-space: nowrap;
 }
@@ -551,7 +570,7 @@ button, input, textarea, select { font: inherit; }
   flex: 0 0 24px;
   display: grid;
   place-items: center;
-  background: var(--green);
+  background: var(--primary);
   color: #fff;
   font-size: 11px;
   font-weight: 800;
@@ -577,12 +596,12 @@ button, input, textarea, select { font: inherit; }
 
 .meal-card.lunch .randomize-btn:hover {
   background: #fff3dc;
-  color: var(--amber);
+  color: var(--primary);
 }
 
 .meal-card.dinner .randomize-btn:hover {
   background: #edf8ef;
-  color: var(--green-strong);
+  color: var(--accent);
 }
 
 .app-footer {
@@ -749,4 +768,107 @@ button, input, textarea, select { font: inherit; }
   .meal-body {
     padding: 0 12px 12px;
   }
+}
+
+/* Enhanced visual polish and interactions */
+.meal-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+
+.meal-card:hover {
+  box-shadow: 0 8px 24px rgba(200, 132, 93, 0.12);
+  border-color: var(--line-strong);
+  transform: translateY(-2px);
+}
+
+.day-row {
+  transition: all 0.2s ease;
+}
+
+.day-row:hover {
+  box-shadow: 0 8px 20px rgba(44, 37, 31, 0.1);
+}
+
+/* Enhanced button interactions */
+.randomize-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.randomize-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.5s;
+  pointer-events: none;
+}
+
+.randomize-btn:hover::before {
+  left: 100%;
+}
+
+/* Smooth text selection */
+.app {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Enhanced focus states for accessibility */
+button:focus,
+input:focus,
+select:focus,
+textarea:focus {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* Subtle animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.day-row {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Better table styling */
+.ingredient-table tr:hover {
+  background: #f9f7f5;
+}
+
+.ingredient-table td {
+  transition: background 0.15s ease;
+}
+
+/* Improved link/interactive elements */
+.blog-card {
+  transition: all 0.3s ease;
+}
+
+.blog-card:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-4px);
+}
+
+/* Progress indicators and badges */
+.step-num {
+  box-shadow: 0 2px 8px rgba(200, 132, 93, 0.25);
+  transition: all 0.2s ease;
+}
+
+.steps-list li:hover .step-num {
+  box-shadow: 0 4px 12px rgba(200, 132, 93, 0.4);
+  transform: scale(1.1);
 }
