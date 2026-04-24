@@ -3,30 +3,6 @@ import { generateMonthPlan, getRandomMeal } from "./data/meals";
 import { POSTS } from "./data/posts";
 import "./App.css";
 
-const repairVietnameseText = (value) => {
-  if (typeof value !== "string" || !/[ÃÂÆÄá»áº]/.test(value)) return value;
-
-  try {
-    return decodeURIComponent(escape(value));
-  } catch {
-    return value;
-  }
-};
-
-const repairUiData = (value) => {
-  if (Array.isArray(value)) {
-    return value.map((item) => repairUiData(item));
-  }
-
-  if (value && typeof value === "object") {
-    return Object.fromEntries(
-      Object.entries(value).map(([key, nestedValue]) => [repairVietnameseText(key), repairUiData(nestedValue)])
-    );
-  }
-
-  return repairVietnameseText(value);
-};
-
 const quickMenus = [
   { label: "Nguyên tắc", href: "#notice", page: "home" },
   { label: "Hướng dẫn sử dụng", href: "#guide", page: "home" },
@@ -99,10 +75,31 @@ const noticeByTab = {
   ],
 };
 
-const uiQuickMenus = repairUiData(quickMenus);
-const uiNavLinks = repairUiData(navLinks);
-const uiNoticeTabs = repairUiData(noticeTabs);
-const uiNoticeByTab = repairUiData(noticeByTab);
+const copyText = async (text) => {
+  if (navigator.clipboard?.writeText) {
+    await navigator.clipboard.writeText(text);
+    return;
+  }
+
+  const textarea = document.createElement("textarea");
+  textarea.value = text;
+  textarea.setAttribute("readonly", "");
+  textarea.style.position = "fixed";
+  textarea.style.top = "-9999px";
+  document.body.appendChild(textarea);
+  textarea.select();
+
+  const copied = document.execCommand("copy");
+  document.body.removeChild(textarea);
+
+  if (!copied) {
+    throw new Error("Copy command failed");
+  }
+};
+
+const openShareWindow = (url) => {
+  window.open(url, "_blank", "noopener,noreferrer,width=720,height=620");
+};
 
 function IconRefresh() {
   return (
@@ -209,7 +206,7 @@ function MealCard({ label, meal, servings, onRandomize }) {
             </ol>
           </div>
         </details>
-        <button onClick={onRandomize}>
+        <button type="button" onClick={onRandomize}>
           <IconRefresh />
           Đổi món này
         </button>
@@ -287,7 +284,7 @@ function BlogPage({ onGoHome, activePostSlug, onSelectPost }) {
 
   const copyPostLink = async () => {
     try {
-      await navigator.clipboard.writeText(postUrl);
+      await copyText(postUrl);
       setCopyLabel("Đã sao chép link");
       window.setTimeout(() => setCopyLabel("Sao chép link bài viết"), 1800);
     } catch {
@@ -359,8 +356,13 @@ function BlogPage({ onGoHome, activePostSlug, onSelectPost }) {
     onSelectPost(slug);
   };
 
-  const shareToFacebook = () => {};
-  const shareToZalo = () => {};
+  const shareToFacebook = () => {
+    openShareWindow(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(postUrl)}`);
+  };
+
+  const shareToZalo = () => {
+    openShareWindow(`https://zalo.me/share?u=${encodeURIComponent(postUrl)}`);
+  };
 
   return (
     <main className="content-wrap blog-page">
@@ -372,7 +374,7 @@ function BlogPage({ onGoHome, activePostSlug, onSelectPost }) {
           phospho, đạm và cách theo dõi an toàn tại nhà.
         </p>
         <div className="hero-actions">
-          <button className="primary-link action-button" onClick={onGoHome}>
+          <button type="button" className="primary-link action-button" onClick={onGoHome}>
             Về trang thực đơn
           </button>
           <a className="secondary-link" href="#blog-list">
@@ -493,7 +495,7 @@ export default function App() {
   const today = Math.min(new Date().getDate(), 30);
   const [plan, setPlan] = useState(() => generateMonthPlan());
   const [servings, setServings] = useState(2);
-  const [activeTab, setActiveTab] = useState(uiNoticeTabs[0]);
+  const [activeTab, setActiveTab] = useState(noticeTabs[0]);
   const [selectedDay, setSelectedDay] = useState(today);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(initialRoute.page);
@@ -751,33 +753,6 @@ export default function App() {
     return () => window.removeEventListener("scroll", onScroll);
   }, [mobileMenuOpen]);
 
-  useEffect(() => {
-    const root = document.getElementById("root");
-    if (!root) return;
-
-    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
-    const textNodes = [];
-
-    while (walker.nextNode()) {
-      textNodes.push(walker.currentNode);
-    }
-
-    textNodes.forEach((node) => {
-      const nextValue = repairVietnameseText(node.nodeValue || "");
-      if (nextValue !== node.nodeValue) {
-        node.nodeValue = nextValue;
-      }
-    });
-
-    root.querySelectorAll("[aria-label]").forEach((element) => {
-      const currentLabel = element.getAttribute("aria-label");
-      const nextLabel = repairVietnameseText(currentLabel);
-      if (currentLabel && nextLabel !== currentLabel) {
-        element.setAttribute("aria-label", nextLabel);
-      }
-    });
-  }, [activeTab, activePostSlug, currentPage, isFeaturedModalClosing, isFeaturedModalOpen, mobileMenuOpen, plan, selectedDay, servings]);
-
   const displayedPlans = [getDayPlan(selectedDay), getDayPlan(nextSelectedDay)].filter(Boolean);
 
   return (
@@ -806,7 +781,7 @@ export default function App() {
             <span />
           </button>
           <nav id="main-navigation" className={`main-nav ${mobileMenuOpen ? "is-open" : ""}`}>
-            {uiNavLinks.map((link) => (
+            {navLinks.map((link) => (
               <a
                 key={`${link.label}-${link.page || "home"}`}
                 href={link.page === "blog" ? "?page=blog" : link.href}
@@ -854,7 +829,7 @@ export default function App() {
               <a className="secondary-link" href="#guide" onClick={(event) => handleNavClick(event, { page: "home", href: "#guide" })}>Cách sử dụng</a>
             </div>
             <div className="quick-grid">
-              {uiQuickMenus.map((item) => (
+              {quickMenus.map((item) => (
                 <a
                   key={item.label}
                   href={item.page === "blog" ? `?page=blog&post=${activePostSlug || POSTS[0]?.slug || ""}` : item.href}
@@ -901,11 +876,23 @@ export default function App() {
               </label>
               <div className="servings">
                 <span>Khẩu phần</span>
-                <button onClick={() => setServings((v) => Math.max(1, v - 1))}>-</button>
+                <button
+                  type="button"
+                  aria-label="Giảm khẩu phần"
+                  onClick={() => setServings((v) => Math.max(1, v - 1))}
+                >
+                  -
+                </button>
                 <strong>{servings}</strong>
-                <button onClick={() => setServings((v) => Math.min(8, v + 1))}>+</button>
+                <button
+                  type="button"
+                  aria-label="Tăng khẩu phần"
+                  onClick={() => setServings((v) => Math.min(8, v + 1))}
+                >
+                  +
+                </button>
               </div>
-              <button className="regen-btn" onClick={regeneratePlan}>
+              <button type="button" className="regen-btn" onClick={regeneratePlan}>
                 <IconRefresh />
                 Tạo lại thực đơn
               </button>
@@ -913,10 +900,10 @@ export default function App() {
           </div>
 
           <div className="planner-summary">
-            <button className={selectedDay === today ? "active" : ""} onClick={showToday}>
+            <button type="button" className={selectedDay === today ? "active" : ""} onClick={showToday}>
               Hôm nay
             </button>
-            <button onClick={() => setSelectedDay(today === 30 ? 1 : today + 1)}>
+            <button type="button" onClick={() => setSelectedDay(today === 30 ? 1 : today + 1)}>
               Ngày mai
             </button>
             <span>
@@ -944,7 +931,7 @@ export default function App() {
           <div className="section-title-row">
             <h2>Nguyên tắc ăn uống cho thận</h2>
             <div className="tabs">
-              {uiNoticeTabs.map((tab) => (
+              {noticeTabs.map((tab) => (
                 <button
                   key={tab}
                   className={tab === activeTab ? "active" : ""}
@@ -957,7 +944,7 @@ export default function App() {
           </div>
           <div className="notice-grid">
             <div className="notice-cards">
-              {uiNoticeByTab[activeTab].map((item) => (
+              {noticeByTab[activeTab].map((item) => (
                 <article key={`${activeTab}-${item.title}`} className="notice-card">
                   <time>{item.date}</time>
                   <h3>{item.title}</h3>
@@ -1013,8 +1000,8 @@ export default function App() {
           <p>Hỗ trợ xây dựng bữa ăn phù hợp cho bệnh thận mạn tính.</p>
         </div>
         <div className="footer-actions">
-          <button onClick={() => navigateTo({ page: "home", hash: "#planner" })}>Đến thực đơn</button>
-          <button onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>Lên đầu trang</button>
+          <button type="button" onClick={() => navigateTo({ page: "home", hash: "#planner" })}>Đến thực đơn</button>
+          <button type="button" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>Lên đầu trang</button>
         </div>
       </footer>
       </div>
@@ -1030,6 +1017,7 @@ export default function App() {
             onClick={(event) => event.stopPropagation()}
             role="dialog"
             aria-modal="true"
+            aria-labelledby="featured-meal-title"
           >
             <button type="button" className="featured-modal-close" onClick={closeFeaturedModal} aria-label="Đóng chi tiết món">
               ×
@@ -1042,7 +1030,7 @@ export default function App() {
             </div>
             <div className="featured-modal-body">
               <p className="featured-detail-label">{featuredMeal.sessionLabel} gợi ý</p>
-              <h3>{featuredMeal.name}</h3>
+              <h3 id="featured-meal-title">{featuredMeal.name}</h3>
               <p className="featured-modal-note">{featuredMeal.note}</p>
               <div className="meal-tags">
                 {featuredMeal.tags.slice(0, 3).map((tag) => (
