@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { generateMonthPlan, getRandomMeal } from "./data/meals";
 import { POSTS } from "./data/posts";
 import "./App.css";
@@ -278,6 +278,8 @@ function BlogPage({ onGoHome, activePostSlug, onSelectPost }) {
     .map((slug) => POSTS.find((post) => post.slug === slug))
     .filter(Boolean);
   const [copyLabel, setCopyLabel] = useState("Sao chép link bài viết");
+  const articleRef = useRef(null);
+  const pendingMobileScrollRef = useRef(false);
   const postUrl =
     typeof window === "undefined"
       ? `?page=blog&post=${activePost.slug}`
@@ -297,6 +299,15 @@ function BlogPage({ onGoHome, activePostSlug, onSelectPost }) {
   useEffect(() => {
     setCopyLabel("Sao chép link bài viết");
   }, [activePostSlug]);
+
+  useEffect(() => {
+    if (!pendingMobileScrollRef.current || typeof window === "undefined") return;
+
+    pendingMobileScrollRef.current = false;
+    window.requestAnimationFrame(() => {
+      articleRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  }, [activePost.slug]);
 
   useEffect(() => {
     const previousTitle = document.title;
@@ -340,15 +351,16 @@ function BlogPage({ onGoHome, activePostSlug, onSelectPost }) {
     };
   }, [activePost]);
 
-  const shareToFacebook = () => {
-    const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(postUrl)}`;
-    window.open(shareUrl, "_blank", "noopener,noreferrer,width=720,height=640");
+  const handleSelectPost = (slug) => {
+    if (typeof window !== "undefined" && window.matchMedia("(max-width: 1024px)").matches) {
+      pendingMobileScrollRef.current = true;
+    }
+
+    onSelectPost(slug);
   };
 
-  const shareToZalo = () => {
-    const shareUrl = `https://zalo.me/share?url=${encodeURIComponent(postUrl)}`;
-    window.open(shareUrl, "_blank", "noopener,noreferrer,width=720,height=640");
-  };
+  const shareToFacebook = () => {};
+  const shareToZalo = () => {};
 
   return (
     <main className="content-wrap blog-page">
@@ -380,7 +392,7 @@ function BlogPage({ onGoHome, activePostSlug, onSelectPost }) {
                 key={post.slug}
                 type="button"
                 className={`blog-sidebar-item ${post.slug === activePost.slug ? "active" : ""}`}
-                onClick={() => onSelectPost(post.slug)}
+                onClick={() => handleSelectPost(post.slug)}
               >
                 <span>{post.date}</span>
                 <strong>{post.title}</strong>
@@ -389,7 +401,7 @@ function BlogPage({ onGoHome, activePostSlug, onSelectPost }) {
             ))}
           </aside>
 
-          <article className="blog-article">
+          <article className="blog-article" ref={articleRef}>
             <div className="blog-article-image">
               <img src={activePost.image} alt={activePost.title} loading="lazy" />
             </div>
@@ -418,7 +430,7 @@ function BlogPage({ onGoHome, activePostSlug, onSelectPost }) {
                       key={post.slug}
                       type="button"
                       className="related-post-card"
-                      onClick={() => onSelectPost(post.slug)}
+                      onClick={() => handleSelectPost(post.slug)}
                     >
                       <img src={post.image} alt={post.title} loading="lazy" />
                       <div>
