@@ -97,10 +97,6 @@ const copyText = async (text) => {
   }
 };
 
-const openShareWindow = (url) => {
-  window.open(url, "_blank", "noopener,noreferrer,width=720,height=620");
-};
-
 function IconRefresh() {
   return (
     <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -356,14 +352,6 @@ function BlogPage({ onGoHome, activePostSlug, onSelectPost }) {
     onSelectPost(slug);
   };
 
-  const shareToFacebook = () => {
-    openShareWindow(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(postUrl)}`);
-  };
-
-  const shareToZalo = () => {
-    openShareWindow(`https://zalo.me/share?u=${encodeURIComponent(postUrl)}`);
-  };
-
   return (
     <main className="content-wrap blog-page">
       <section className="page-hero">
@@ -414,12 +402,6 @@ function BlogPage({ onGoHome, activePostSlug, onSelectPost }) {
               <div className="blog-article-tools">
                 <button type="button" className="copy-link-btn" onClick={copyPostLink}>
                   {copyLabel}
-                </button>
-                <button type="button" className="share-btn facebook" onClick={shareToFacebook}>
-                  Chia sẻ Facebook
-                </button>
-                <button type="button" className="share-btn zalo" onClick={shareToZalo}>
-                  Chia sẻ Zalo
                 </button>
                 <span>{`?page=blog&post=${activePost.slug}`}</span>
               </div>
