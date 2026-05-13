@@ -1,0 +1,84 @@
+{
+  "noticeTabs": [
+    {
+      "label": "Nguyên tắc",
+      "items": [
+        {
+          "date": "01",
+          "title": "Ăn nhạt trước tiên",
+          "text": "Giảm nước mắm, muối, hạt nêm, đồ hộp và thực phẩm chế biến sẵn để giảm gánh nặng cho thận."
+        },
+        {
+          "date": "02",
+          "title": "Theo dõi kali và phospho",
+          "text": "Chọn rau củ phù hợp, luộc bỏ nước với một số loại rau và điều chỉnh theo kết quả xét nghiệm."
+        },
+        {
+          "date": "03",
+          "title": "Đạm vừa phải",
+          "text": "Không tự tăng khẩu phần thịt cá. Lượng đạm nên theo giai đoạn bệnh và hướng dẫn điều trị."
+        }
+      ]
+    },
+    {
+      "label": "Lời nhắc",
+      "items": [
+        {
+          "date": "Mỗi ngày",
+          "title": "Ghi lại cân nặng và huyết áp",
+          "text": "Theo dõi vào khung giờ cố định để phát hiện sớm phù, tăng huyết áp hoặc thay đổi bất thường."
+        },
+        {
+          "date": "Mỗi bữa",
+          "title": "Ưu tiên luộc, hấp, nêm nhẹ",
+          "text": "Dùng gừng, hành, tỏi, chanh và rau thơm để tăng mùi vị thay vì thêm nhiều gia vị mặn."
+        },
+        {
+          "date": "Hàng tuần",
+          "title": "Xem lại món hợp khẩu vị",
+          "text": "Đổi món không phù hợp, giữ lại các món dễ ăn và mang nhật ký ăn uống khi tái khám."
+        }
+      ]
+    },
+    {
+      "label": "Cần hỏi bác sĩ",
+      "items": [
+        {
+          "date": "Quan trọng",
+          "title": "Lượng nước uống mỗi ngày",
+          "text": "Không tự tăng hoặc giảm lượng nước nếu đang phù, tiểu ít, suy tim hoặc có chỉ định hạn chế dịch."
+        },
+        {
+          "date": "Quan trọng",
+          "title": "Mức kali/phospho trong máu",
+          "text": "Nếu kali hoặc phospho cao, cần cá nhân hóa thực đơn kỹ hơn thay vì dùng thực đơn mẫu."
+        },
+        {
+          "date": "Quan trọng",
+          "title": "Giai đoạn bệnh thận",
+          "text": "Người lọc máu, bệnh thận giai đoạn muộn hoặc có bệnh nền cần hướng dẫn riêng."
+        }
+      ]
+    }
+  ],
+  "trackingCards": [
+    {
+      "title": "Nhật ký nên ghi",
+      "items": [
+        "Cân nặng buổi sáng sau khi đi tiểu",
+        "Huyết áp theo giờ cố định, nên đo 2 lần/ngày",
+        "Lượng nước uống, nước tiểu và dấu hiệu phù",
+        "Món ăn gây khó chịu, chán ăn hoặc đầy bụng"
+      ]
+    },
+    {
+      "title": "Khi nào cần hỏi bác sĩ?",
+      "items": [
+        "Tăng cân nhanh, phù chân, khó thở hoặc tiểu ít hơn rõ rệt",
+        "Huyết áp tăng cao liên tục hoặc chóng mặt bất thường",
+        "Kết quả xét nghiệm kali, phospho, ure, creatinine thay đổi",
+        "Muốn đổi chế độ đạm, nước uống hoặc dùng thực phẩm bổ sung"
+      ]
+    }
+  ]
+}

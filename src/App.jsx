@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { generateMonthPlan, getRandomMeal } from "./data/meals";
 import { POSTS } from "./data/posts";
+import tipsContent from "./content/tips.json";
 import "./App.css";
 
 const quickMenus = [
@@ -19,61 +20,9 @@ const navLinks = [
   { label: "Blog", page: "blog" },
 ];
 
-const noticeTabs = ["Nguyên tắc", "Lời nhắc", "Cần hỏi bác sĩ"];
-
-const noticeByTab = {
-  "Nguyên tắc": [
-    {
-      date: "01",
-      title: "Ăn nhạt trước tiên",
-      text: "Giảm nước mắm, muối, hạt nêm, đồ hộp và thực phẩm chế biến sẵn để giảm gánh nặng cho thận.",
-    },
-    {
-      date: "02",
-      title: "Theo dõi kali và phospho",
-      text: "Chọn rau củ phù hợp, luộc bỏ nước với một số loại rau và điều chỉnh theo kết quả xét nghiệm.",
-    },
-    {
-      date: "03",
-      title: "Đạm vừa phải",
-      text: "Không tự tăng khẩu phần thịt cá. Lượng đạm nên theo giai đoạn bệnh và hướng dẫn điều trị.",
-    },
-  ],
-  "Lời nhắc": [
-    {
-      date: "Mỗi ngày",
-      title: "Ghi lại cân nặng và huyết áp",
-      text: "Theo dõi vào khung giờ cố định để phát hiện sớm phù, tăng huyết áp hoặc thay đổi bất thường.",
-    },
-    {
-      date: "Mỗi bữa",
-      title: "Ưu tiên luộc, hấp, nêm nhẹ",
-      text: "Dùng gừng, hành, tỏi, chanh và rau thơm để tăng mùi vị thay vì thêm nhiều gia vị mặn.",
-    },
-    {
-      date: "Hàng tuần",
-      title: "Xem lại món hợp khẩu vị",
-      text: "Đổi món không phù hợp, giữ lại các món dễ ăn và mang nhật ký ăn uống khi tái khám.",
-    },
-  ],
-  "Cần hỏi bác sĩ": [
-    {
-      date: "Quan trọng",
-      title: "Lượng nước uống mỗi ngày",
-      text: "Không tự tăng hoặc giảm lượng nước nếu đang phù, tiểu ít, suy tim hoặc có chỉ định hạn chế dịch.",
-    },
-    {
-      date: "Quan trọng",
-      title: "Mức kali/phospho trong máu",
-      text: "Nếu kali hoặc phospho cao, cần cá nhân hóa thực đơn kỹ hơn thay vì dùng thực đơn mẫu.",
-    },
-    {
-      date: "Quan trọng",
-      title: "Giai đoạn bệnh thận",
-      text: "Người lọc máu, bệnh thận giai đoạn muộn hoặc có bệnh nền cần hướng dẫn riêng.",
-    },
-  ],
-};
+const noticeTabs = (tipsContent.noticeTabs || []).map((tab) => tab.label);
+const noticeByTab = Object.fromEntries((tipsContent.noticeTabs || []).map((tab) => [tab.label, tab.items || []]));
+const trackingCards = tipsContent.trackingCards || [];
 
 const copyText = async (text) => {
   if (navigator.clipboard?.writeText) {
@@ -439,24 +388,16 @@ function TrackingSection() {
     <section className="education" id="tracking">
       <h2>Theo dõi sức khỏe tại nhà</h2>
       <div className="education-grid">
-        <article className="education-card">
-          <h3>Nhật ký nên ghi</h3>
-          <ul>
-            <li>Cân nặng buổi sáng sau khi đi tiểu</li>
-            <li>Huyết áp theo giờ cố định, nên đo 2 lần/ngày</li>
-            <li>Lượng nước uống, nước tiểu và dấu hiệu phù</li>
-            <li>Món ăn gây khó chịu, chán ăn hoặc đầy bụng</li>
-          </ul>
-        </article>
-        <article className="education-card">
-          <h3>Khi nào cần hỏi bác sĩ?</h3>
-          <ul>
-            <li>Tăng cân nhanh, phù chân, khó thở hoặc tiểu ít hơn rõ rệt</li>
-            <li>Huyết áp tăng cao liên tục hoặc chóng mặt bất thường</li>
-            <li>Kết quả xét nghiệm kali, phospho, ure, creatinine thay đổi</li>
-            <li>Muốn đổi chế độ đạm, nước uống hoặc dùng thực phẩm bổ sung</li>
-          </ul>
-        </article>
+        {trackingCards.map((card) => (
+          <article className="education-card" key={card.title}>
+            <h3>{card.title}</h3>
+            <ul>
+              {(card.items || []).map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </article>
+        ))}
       </div>
     </section>
   );
@@ -926,7 +867,7 @@ export default function App() {
           </div>
           <div className="notice-grid">
             <div className="notice-cards">
-              {noticeByTab[activeTab].map((item) => (
+              {(noticeByTab[activeTab] || []).map((item) => (
                 <article key={`${activeTab}-${item.title}`} className="notice-card">
                   <time>{item.date}</time>
                   <h3>{item.title}</h3>

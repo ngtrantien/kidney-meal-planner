@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Path \"g:\\\\My Drive\\\\00-In Process\\\\KenG\\\\Benh-Than\\\\GitHub\\\\kidney-meal-planner\" -Force)"
+    ]
+  }
+}

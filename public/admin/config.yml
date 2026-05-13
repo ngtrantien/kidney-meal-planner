@@ -1,0 +1,118 @@
+backend:
+  name: github
+  repo: ngtrantien/kidney-meal-planner
+  branch: main
+  # GitHub Pages needs an OAuth proxy for Decap CMS login.
+  # After creating the GitHub OAuth App, set these values:
+  # base_url: https://your-oauth-proxy.example.com
+  # auth_endpoint: auth
+
+local_backend: true
+
+site_url: https://ngtrantien.github.io/kidney-meal-planner
+display_url: https://ngtrantien.github.io/kidney-meal-planner
+logo_url: /kidney-meal-planner/images/meals/placeholder.svg
+
+media_folder: public/uploads
+public_folder: /uploads
+
+collections:
+  - name: meal_data
+    label: Mon an
+    files:
+      - name: meals
+        label: Danh sach mon an
+        file: src/content/meals.json
+        format: json
+        fields:
+          - name: meals
+            label: Mon an
+            widget: list
+            summary: "{{fields.id}} - {{fields.name}}"
+            fields:
+              - { name: id, label: ID, widget: string, hint: "Vi du: lunch_001 hoac dinner_001" }
+              - label: Bua an
+                name: session
+                widget: select
+                options:
+                  - { label: Bua trua, value: lunch }
+                  - { label: Bua toi, value: dinner }
+              - { name: name, label: Ten mon, widget: string }
+              - { name: image, label: Hinh anh, widget: image, required: false }
+              - { name: note, label: Ghi chu dinh duong, widget: text, required: false }
+              - name: tags
+                label: Tags
+                widget: list
+                field: { name: tag, label: Tag, widget: string }
+              - name: ingredients
+                label: Nguyen lieu
+                widget: list
+                summary: "{{fields.name}} - {{fields.per1}}{{fields.unit}}"
+                fields:
+                  - { name: name, label: Ten nguyen lieu, widget: string }
+                  - { name: unit, label: Don vi, widget: string, hint: "g, ml, qua, tep..." }
+                  - { name: per1, label: Luong cho 1 nguoi, widget: number, value_type: float, min: 0 }
+              - name: steps
+                label: Cach nau
+                widget: list
+                field: { name: step, label: Buoc, widget: text }
+
+  - name: blog_data
+    label: Blog dinh duong
+    files:
+      - name: posts
+        label: Bai viet
+        file: src/content/posts.json
+        format: json
+        fields:
+          - name: posts
+            label: Bai viet
+            widget: list
+            summary: "{{fields.date}} - {{fields.title}}"
+            fields:
+              - { name: slug, label: Slug, widget: string }
+              - { name: title, label: Tieu de, widget: string }
+              - { name: date, label: Ngay dang, widget: string, hint: "Vi du: 03/05/2026" }
+              - { name: image, label: Hinh anh, widget: image, required: false }
+              - { name: metaTitle, label: Meta title, widget: string, required: false }
+              - { name: metaDescription, label: Meta description, widget: text, required: false }
+              - { name: excerpt, label: Tom tat, widget: text }
+              - name: relatedSlugs
+                label: Bai lien quan
+                widget: list
+                required: false
+                field: { name: slug, label: Slug, widget: string }
+              - { name: content, label: Noi dung HTML, widget: text }
+
+  - name: tips_data
+    label: Tips va theo doi
+    files:
+      - name: tips
+        label: Nguyen tac va theo doi
+        file: src/content/tips.json
+        format: json
+        fields:
+          - name: noticeTabs
+            label: Tabs nguyen tac
+            widget: list
+            summary: "{{fields.label}}"
+            fields:
+              - { name: label, label: Ten tab, widget: string }
+              - name: items
+                label: Noi dung tab
+                widget: list
+                summary: "{{fields.title}}"
+                fields:
+                  - { name: date, label: Nhan nho, widget: string }
+                  - { name: title, label: Tieu de, widget: string }
+                  - { name: text, label: Noi dung, widget: text }
+          - name: trackingCards
+            label: The theo doi tai nha
+            widget: list
+            summary: "{{fields.title}}"
+            fields:
+              - { name: title, label: Tieu de, widget: string }
+              - name: items
+                label: Danh sach
+                widget: list
+                field: { name: item, label: Dong noi dung, widget: string }

@@ -65,12 +65,16 @@ https://YOUR_USERNAME.github.io/kidney-meal-planner/
 ```
 kidney-meal-planner/
 ├── src/
-│   ├── data/
-│   │   └── meals.js        ← Toàn bộ dữ liệu món ăn
+│   ├── content/
+│   │   ├── meals.json      ← Dữ liệu món ăn CMS quản lý
+│   │   ├── posts.json      ← Dữ liệu blog
+│   │   └── tips.json       ← Tips và nội dung theo dõi
+│   ├── data/               ← Adapter đọc dữ liệu JSON
 │   ├── App.jsx             ← Component chính
 │   ├── App.css             ← Toàn bộ styles
 │   └── index.js            ← Entry point
 ├── public/
+│   ├── admin/              ← Decap CMS
 │   └── index.html
 ├── .github/workflows/
 │   └── deploy.yml          ← Auto-deploy CI/CD
@@ -79,7 +83,11 @@ kidney-meal-planner/
 
 ## ➕ Thêm món ăn mới
 
-Mở file `src/data/meals.js`, thêm object vào mảng `MEALS`:
+Nội dung món ăn hiện nằm trong `src/content/meals.json` và có thể sửa bằng Decap CMS tại `/admin`.
+
+Xem hướng dẫn admin/OAuth trong `docs/ADMIN.md`.
+
+Nếu sửa tay, thêm object vào mảng `meals` trong `src/content/meals.json`:
 
 ```js
 {
