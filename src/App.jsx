@@ -59,6 +59,27 @@ function IconRefresh() {
   );
 }
 
+function IconPrint() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path
+        d="M7 9V3H17V9M7 17H5C3.9 17 3 16.1 3 15V11C3 9.9 3.9 9 5 9H19C20.1 9 21 9.9 21 11V15C21 16.1 20.1 17 19 17H17"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinejoin="round"
+      />
+      <path d="M7 14H17V21H7V14Z" stroke="currentColor" strokeWidth="1.8" />
+      <path d="M17.5 12H18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+const formatIngredient = (item, servings) => {
+  const amount = item.per1 * servings;
+  const display = Number.isInteger(amount) ? amount : amount.toFixed(1);
+  return `${item.name}: ${display}${item.unit}`;
+};
+
 function SafetyNotice() {
   return (
     <section className="safety-note" aria-label="Lưu ý y tế">
@@ -101,11 +122,7 @@ function GuideSection() {
 }
 
 function MealCard({ label, meal, servings, onRandomize }) {
-  const scaledIngredients = meal.ingredients.map((item) => {
-    const amount = item.per1 * servings;
-    const display = Number.isInteger(amount) ? amount : amount.toFixed(1);
-    return `${item.name}: ${display}${item.unit}`;
-  });
+  const scaledIngredients = meal.ingredients.map((item) => formatIngredient(item, servings));
   const shortIngredients = scaledIngredients.slice(0, 4);
   const quickSteps = meal.steps.slice(0, 3);
 
@@ -181,6 +198,65 @@ function DayPlan({ dayPlan, servings, onRandomize, isToday, badge }) {
           onRandomize={() => onRandomize(dayPlan.day, "dinner")}
         />
       </div>
+    </section>
+  );
+}
+
+function PrintableMeal({ label, meal, servings }) {
+  return (
+    <article className="print-meal">
+      <header className="print-meal-header">
+        <span>{label}</span>
+        <h2>{meal.name}</h2>
+      </header>
+      {meal.note && <p className="print-meal-note">{meal.note}</p>}
+      <section className="print-meal-section">
+        <h3>Nguyên liệu cho {servings} người</h3>
+        <ul>
+          {meal.ingredients.map((item) => (
+            <li key={`${meal.id}-print-${item.name}`}>{formatIngredient(item, servings)}</li>
+          ))}
+        </ul>
+      </section>
+      <section className="print-meal-section">
+        <h3>Cách nấu chi tiết</h3>
+        <ol>
+          {meal.steps.map((step, index) => (
+            <li key={`${meal.id}-print-step-${index + 1}`}>{step}</li>
+          ))}
+        </ol>
+      </section>
+    </article>
+  );
+}
+
+function PrintPlan({ dayPlans, servings }) {
+  return (
+    <section className="print-plan" aria-label="Thực đơn để in khổ A4">
+      {dayPlans.map((entry, index) => (
+        <article className="print-day" key={`print-day-${entry.day}`}>
+          <header className="print-day-header">
+            <div>
+              <p>THỰC ĐƠN THẬN LÀNH</p>
+              <h1>Thực đơn ngày {entry.day}</h1>
+            </div>
+            <div className="print-day-meta">
+              <strong>{servings} người ăn</strong>
+              <span>
+                Trang {index + 1}/{dayPlans.length}
+              </span>
+            </div>
+          </header>
+          <div className="print-meal-grid">
+            <PrintableMeal label="Bữa trưa" meal={entry.lunch} servings={servings} />
+            <PrintableMeal label="Bữa tối" meal={entry.dinner} servings={servings} />
+          </div>
+          <footer className="print-day-footer">
+            Thực đơn chỉ mang tính tham khảo. Hãy điều chỉnh lượng nước, đạm, kali, phospho và natri
+            theo hướng dẫn của bác sĩ hoặc chuyên gia dinh dưỡng.
+          </footer>
+        </article>
+      ))}
     </section>
   );
 }
@@ -418,6 +494,7 @@ export default function App() {
   const today = Math.min(new Date().getDate(), 30);
   const [plan, setPlan] = useState(() => generateMonthPlan());
   const [servings, setServings] = useState(2);
+  const [printDayCount, setPrintDayCount] = useState(3);
   const [activeTab, setActiveTab] = useState(noticeTabs[0]);
   const [selectedDay, setSelectedDay] = useState(today);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -488,6 +565,19 @@ export default function App() {
 
   const regeneratePlan = () => {
     setPlan(generateMonthPlan());
+  };
+
+  const handlePrintPlan = () => {
+    const previousTitle = document.title;
+    const cleanupPrintMode = () => {
+      document.body.classList.remove("printing-meal-plan");
+      document.title = previousTitle;
+    };
+
+    document.body.classList.add("printing-meal-plan");
+    document.title = `Thuc-don-${printDayCount}-ngay-tu-ngay-${selectedDay}`;
+    window.addEventListener("afterprint", cleanupPrintMode, { once: true });
+    window.requestAnimationFrame(() => window.print());
   };
 
   const replaceTodayMealWithFeatured = (featuredItem) => {
@@ -677,6 +767,10 @@ export default function App() {
   }, [mobileMenuOpen]);
 
   const displayedPlans = [getDayPlan(selectedDay), getDayPlan(nextSelectedDay)].filter(Boolean);
+  const printPlans = Array.from({ length: printDayCount }, (_, index) => {
+    const day = ((selectedDay - 1 + index) % 30) + 1;
+    return getDayPlan(day);
+  }).filter(Boolean);
 
   return (
     <>
@@ -819,6 +913,26 @@ export default function App() {
                 <IconRefresh />
                 Tạo lại thực đơn
               </button>
+              <div className="print-controls">
+                <label className="print-day-select">
+                  <span>Số ngày in</span>
+                  <select
+                    value={printDayCount}
+                    onChange={(event) => setPrintDayCount(Number(event.target.value))}
+                    aria-label="Chọn số ngày muốn in"
+                  >
+                    {[3, 5, 7].map((count) => (
+                      <option key={count} value={count}>
+                        {count} ngày
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <button type="button" className="print-btn" onClick={handlePrintPlan}>
+                  <IconPrint />
+                  In A4
+                </button>
+              </div>
             </div>
           </div>
 
@@ -993,6 +1107,8 @@ export default function App() {
           </div>
         </div>
       )}
+
+      <PrintPlan dayPlans={printPlans} servings={servings} />
     </>
   );
 }

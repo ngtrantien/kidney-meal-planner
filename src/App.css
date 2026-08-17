@@ -1341,6 +1341,8 @@ a {
   display: flex;
   gap: 10px;
   align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 .day-select {
@@ -1433,6 +1435,75 @@ a {
   background: var(--green-dark);
   box-shadow: 0 10px 22px rgba(47, 111, 53, 0.22);
   transform: translateY(-2px);
+}
+
+.print-controls {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+}
+
+.print-day-select {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #fff;
+  padding: 6px 8px 6px 14px;
+}
+
+.print-day-select span {
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.print-day-select select {
+  border: 0;
+  border-radius: 999px;
+  background: var(--surface-soft);
+  color: var(--text);
+  cursor: pointer;
+  font-weight: 800;
+  padding: 8px 28px 8px 10px;
+  outline: none;
+}
+
+.print-day-select select:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 2px;
+}
+
+.print-btn {
+  border: 1px solid var(--green);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--green-dark);
+  padding: 10px 14px;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease;
+}
+
+.print-btn svg {
+  width: 17px;
+  height: 17px;
+}
+
+.print-btn:hover {
+  background: var(--green-pale);
+  box-shadow: 0 10px 22px rgba(47, 111, 53, 0.16);
+  transform: translateY(-2px);
+}
+
+.print-plan {
+  display: none;
 }
 
 .planner-summary {
@@ -2163,9 +2234,18 @@ a {
 
   .day-select,
   .servings,
-  .regen-btn {
+  .regen-btn,
+  .print-controls {
     width: 100%;
     justify-content: center;
+  }
+
+  .print-day-select {
+    flex: 1;
+  }
+
+  .print-day-select select {
+    flex: 1;
   }
 
   .day-select select {
@@ -2251,5 +2331,172 @@ a {
 
   .footer-actions button {
     width: 100%;
+  }
+}
+
+@page {
+  size: A4 portrait;
+  margin: 10mm;
+}
+
+@media print {
+  body.printing-meal-plan {
+    background: #fff;
+    color: #172018;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  body.printing-meal-plan .top-header,
+  body.printing-meal-plan .site-shell,
+  body.printing-meal-plan .featured-modal-backdrop {
+    display: none !important;
+  }
+
+  body.printing-meal-plan .print-plan {
+    display: block;
+  }
+
+  .print-day {
+    min-height: 272mm;
+    display: flex;
+    flex-direction: column;
+    break-after: page;
+    page-break-after: always;
+  }
+
+  .print-day:last-child {
+    break-after: auto;
+    page-break-after: auto;
+  }
+
+  .print-day-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 10mm;
+    border-bottom: 2px solid #2f6f35;
+    padding-bottom: 4mm;
+    margin-bottom: 5mm;
+  }
+
+  .print-day-header p {
+    margin: 0 0 1.5mm;
+    color: #2f6f35;
+    font-size: 9pt;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+  }
+
+  .print-day-header h1 {
+    margin: 0;
+    color: #172018;
+    font-family: Arial, sans-serif;
+    font-size: 20pt;
+    line-height: 1.1;
+  }
+
+  .print-day-meta {
+    display: grid;
+    gap: 1mm;
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  .print-day-meta strong {
+    color: #2f6f35;
+    font-size: 10pt;
+  }
+
+  .print-day-meta span {
+    color: #566458;
+    font-size: 8.5pt;
+  }
+
+  .print-meal-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6mm;
+    align-items: start;
+  }
+
+  .print-meal {
+    min-width: 0;
+    border: 1px solid #cbd8c8;
+    border-radius: 3mm;
+    padding: 4mm;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .print-meal-header {
+    border-bottom: 1px solid #dbe5d8;
+    padding-bottom: 3mm;
+    margin-bottom: 3mm;
+  }
+
+  .print-meal-header span {
+    display: inline-block;
+    border-radius: 999px;
+    background: #e8f2e4;
+    color: #2f6f35;
+    padding: 1mm 2.5mm;
+    font-size: 8pt;
+    font-weight: 800;
+  }
+
+  .print-meal-header h2 {
+    margin: 2mm 0 0;
+    color: #172018;
+    font-family: Arial, sans-serif;
+    font-size: 12.5pt;
+    line-height: 1.25;
+  }
+
+  .print-meal-note {
+    margin: 0 0 3mm;
+    border-left: 2px solid #7ca06f;
+    color: #465248;
+    padding-left: 2.5mm;
+    font-size: 8.5pt;
+    line-height: 1.35;
+  }
+
+  .print-meal-section {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .print-meal-section + .print-meal-section {
+    margin-top: 4mm;
+  }
+
+  .print-meal-section h3 {
+    margin: 0 0 2mm;
+    color: #2f6f35;
+    font-family: Arial, sans-serif;
+    font-size: 9.5pt;
+  }
+
+  .print-meal-section ul,
+  .print-meal-section ol {
+    margin: 0;
+    padding-left: 5mm;
+  }
+
+  .print-meal-section li {
+    margin: 0 0 1.3mm;
+    color: #29332b;
+    font-size: 8.5pt;
+    line-height: 1.35;
+  }
+
+  .print-day-footer {
+    margin-top: auto;
+    border-top: 1px solid #dbe5d8;
+    color: #647066;
+    padding-top: 3mm;
+    font-size: 7.5pt;
+    line-height: 1.35;
   }
 }
